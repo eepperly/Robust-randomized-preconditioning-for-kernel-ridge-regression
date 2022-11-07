@@ -1,0 +1,3 @@
+[submodule "FALKON_paper"]
+	path = FALKON_paper
+	url = https://github.com/LCSL/FALKON_paper
