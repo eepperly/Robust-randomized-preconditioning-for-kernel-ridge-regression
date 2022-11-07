@@ -1,7 +1,7 @@
 function [x,stats] = krri(A,mu,b,k,varargin)
 % KRRI Nystrom preconditioning for KRR with an implicitly defined kernel
 % matrix. Assumes that the diagonal of the kernel is all ones unless the
-% diagonal is passed in as optional last argument.
+% diagonal is passed in as optional argument.
 
 if ~isempty(varargin) && ~isempty(varargin{1})
     d = varargin{1};
@@ -24,6 +24,10 @@ end
 if contains(precname, 'nys')
     if contains(precname, 'rpc')
         F = rpcholeskyi(A,d,k,min(100,ceil(k/10))); % Sample
+    elseif contains(precname,'greedy')
+        F = greedyi(A,d,k,1); % Sample
+    elseif contains(precname,'uni')
+        F = uniformi(A,k);
     else
         error('Other Nystrom preconditioners not yet implemented')
     end
