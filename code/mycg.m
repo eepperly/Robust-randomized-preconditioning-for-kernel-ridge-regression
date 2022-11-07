@@ -14,7 +14,7 @@ for iter = 1:maxit
     z = prec(r);
     gamma = z'*r/zr;
     p = z + gamma*p;
-    if ~isempty(summary); stats(end+1) = summary(x); end %#ok<AGROW> 
+    if ~isempty(summary); stats(end+1,:) = summary(x); end %#ok<AGROW> 
     if norm(r) <= tol * bnorm; break; end
 end
 end
