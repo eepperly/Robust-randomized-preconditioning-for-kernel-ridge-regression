@@ -1,5 +1,5 @@
-function [F,AS,S] = rpcholeskyi(A,d,k,B,varargin)
-%RPCHOLESKYI An implicit version of RPCholesky which takes as input a
+function [F,AS,S] = greedyi(A,d,k,B,varargin)
+%GREEDYI An implicit version of greedy pivoting which takes as input a
 % *function* A which takes as input an index set and outputs the columns of
 % A corresponding to that set. Second input specifies the diagonal.
 
@@ -9,7 +9,9 @@ else
     tol = 0;
 end
 N = length(d);
-[F,AS,S] = choleskybasei(A,N,@(d,m) unique(randsample(N,m,true,d)),...
-    k,B,tol);
+[F,AS,S] = choleskybasei(A,N,@greedyselect,k,B,tol);
 end
 
+function idx = greedyselect(d,m)
+    [~,idx] = maxk(d,m);
+end
