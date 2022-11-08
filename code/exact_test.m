@@ -17,14 +17,38 @@ mu = N*1.0e-8;
 a = 5120;
 
 % Kernel matrix
-A = exp(-pdist2(X,X,"minkowski",1)/a);
+kernel = @(X1,X2) exp(-pdist2(X1,X2,"minkowski",1)/a);
+A = kernel(X,X);
+Atest = kernel(X_test,X);
 
 % Stats
+test_accuracy = @(beta) norm(Atest*beta - Y_test,1) / length(Y_test);
 relres = @(beta) norm(A*beta + mu*beta - Y) / norm(Y);
+summary = @(beta) [relres(beta) test_accuracy(beta)];
 
 %% Run with RPCholesky and without
-[~,rpcholesky] = krr(A,mu,Y,100,[],relres,'rpcnys');
-[~,noprec] = krr(A,mu,Y,100,[],relres,'');
-semilogy(rpcholesky(:,1)); hold on; semilogy(noprec(:,1))
+[~,rpcholesky] = krr(A,mu,Y,500,[],summary,'rpcnys');
+[~,greedy] = krr(A,mu,Y,500,[],summary,'greedynys');
+[~,unif] = krr(A,mu,Y,500,[],summary,'uninys');
+[~,noprec] = krr(A,mu,Y,[],[],summary,'');
+
+%% Plots
+close all
+
+figure(1)
+semilogy(rpcholesky(:,1))
+hold on
+semilogy(greedy(:,1))
+semilogy(unif(:,1))
+semilogy(noprec(:,1))
 xlabel('Iteration'); ylabel('Relative Residual')
-legend({'RPCholesky','No Preconditioner'})
+legend({'RPCholesky','Greedy','Uniform','No Preconditioner'})
+
+figure(2)
+semilogy(rpcholesky(:,2))
+hold on
+semilogy(greedy(:,2))
+semilogy(unif(:,2))
+semilogy(noprec(:,2))
+xlabel('Iteration'); ylabel('Relative Residual')
+legend({'RPCholesky','Greedy','Uniform','No Preconditioner'})
