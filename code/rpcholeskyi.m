@@ -9,7 +9,7 @@ else
     tol = 0;
 end
 N = length(d);
-[F,AS,S] = choleskybasei(A,N,@(d,m) unique(randsample(N,m,true,d)),...
+[F,AS,S] = choleskybasei(A,d,@(dd,m) unique(randsample(N,m,true,dd)),...
     k,B,tol);
 end
 

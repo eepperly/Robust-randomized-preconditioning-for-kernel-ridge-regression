@@ -8,8 +8,7 @@ if ~isempty(varargin)
 else
     tol = 0;
 end
-N = length(d);
-[F,AS,S] = choleskybasei(A,N,@greedyselect,k,B,tol);
+[F,AS,S] = choleskybasei(A,d,@greedyselect,k,B,tol);
 end
 
 function idx = greedyselect(d,m)

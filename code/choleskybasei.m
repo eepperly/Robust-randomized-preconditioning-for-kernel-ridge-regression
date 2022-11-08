@@ -1,8 +1,9 @@
-function [F,AS,S] = choleskybasei(A,N,pivotselect,k,B,tol)
+function [F,AS,S] = choleskybasei(A,d,pivotselect,k,B,tol)
 % RPCHOLESKYI An implicit version of RPCholesky which takes as input a
 % *function* A which takes as input an index set and outputs the columns of
 % A corresponding to that set. Second input specifies the diagonal.
 
+N = length(d);
 F = zeros(N,k); AS = zeros(N,k); S = zeros(k,1); i = 0;
 while i < k
     s = pivotselect(d,min(B,k-i));

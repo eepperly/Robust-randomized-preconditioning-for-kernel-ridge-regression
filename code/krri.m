@@ -6,10 +6,10 @@ function [x,stats] = krri(A,mu,b,k,varargin)
 if ~isempty(varargin) && ~isempty(varargin{1})
     d = varargin{1};
 else
-    d = ones(size(b,1));
+    d = ones(size(b,1),1);
 end
 
-if length(varargin) > 1
+if length(varargin) > 1 && ~isempty(varargin{2})
     summary = varargin{2};
 else
     summary = @(x) [];
@@ -38,7 +38,7 @@ else
     prec = @(x) x;
 end
 
-[x,stats] = mycg(@(x) kernmul(A,x) + mu*x, prec,...
+[x,~,stats] = mycg(@(x) kernmul(A,x) + mu*x, prec,...
                  b,0,100,summary);
 end
 
