@@ -26,8 +26,10 @@ end
 Anum = isfloat(A);
 if Anum
     matvec = @(x) A*x + mu*x;
+    N = size(A,1);
 else
     matvec = @(x) kernmul(A,x) + mu*x;
+    N = size(d,1);
 end
 
 if contains(precname, 'nys')
@@ -36,7 +38,7 @@ if contains(precname, 'nys')
     elseif contains(precname,'greedy')
         F = greedy(A,k,1,[],d);
     elseif contains(precname,'uni')
-        F = uniform(A,k);
+        F = uniform(A,k,N);
     else
         error('Other Nystrom preconditioners not yet implemented')
     end
