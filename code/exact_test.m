@@ -50,5 +50,5 @@ hold on
 semilogy(greedy(:,2))
 semilogy(unif(:,2))
 semilogy(noprec(:,2))
-xlabel('Iteration'); ylabel('Relative Residual')
+xlabel('Iteration'); ylabel('Test Accuracy')
 legend({'RPCholesky','Greedy','Uniform','No Preconditioner'})
