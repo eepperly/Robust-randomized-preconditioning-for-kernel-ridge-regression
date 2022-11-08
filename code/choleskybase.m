@@ -1,14 +1,19 @@
-function [F,AS,S] = choleskybasei(A,d,pivotselect,k,B,tol)
-% RPCHOLESKYI An implicit version of RPCholesky which takes as input a
-% *function* A which takes as input an index set and outputs the columns of
-% A corresponding to that set. Second input specifies the diagonal.
+function [F,AS,S] = choleskybase(A,d,pivotselect,k,B,tol)
+% CHOLESKYBASE An interface for Cholesky-based low-rank approximation
+
+if isfloat(A)
+    Afun = @(S) A(:,S);
+    d = diag(A);
+else
+    Afun = A;
+end
 
 N = length(d);
 F = zeros(N,k); AS = zeros(N,k); S = zeros(k,1); i = 0;
 while i < k
     s = pivotselect(d,min(B,k-i));
     S(i+1:i+length(s)) = s; 
-    AS = A(s);
+    AS = Afun(s);
     G = AS - F(:,1:i) * F(s,1:i)';
     R = chol(G(s,:));
     F(:,i+1:i+length(s)) = G / R;
