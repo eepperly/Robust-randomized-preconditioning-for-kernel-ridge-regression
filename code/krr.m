@@ -23,6 +23,12 @@ else
     precname = 'nysrpc';
 end
 
+if length(varargin) > 3
+    numiters = varargin{4};
+else
+    numiters = 100;
+end
+
 Anum = isfloat(A);
 if Anum
     matvec = @(x) A*x + mu*x;
@@ -49,6 +55,6 @@ else
     prec = @(x) x;
 end
 
-[x,~,stats] = mycg(matvec, prec, b,0,100,summary);
+[x,~,stats] = mycg(matvec,prec,b,0,numiters,summary);
 end
 
