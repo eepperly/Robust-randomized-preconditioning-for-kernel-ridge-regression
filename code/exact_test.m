@@ -35,7 +35,7 @@ summary = @(beta) [relres(beta) test_accuracy(beta)];
 %% Plots
 close all
 
-figure(1)
+f1 = figure(1);
 semilogy(rpcholesky(:,1))
 hold on
 semilogy(greedy(:,1))
@@ -44,11 +44,18 @@ semilogy(noprec(:,1))
 xlabel('Iteration'); ylabel('Relative Residual')
 legend({'RPCholesky','Greedy','Uniform','No Preconditioner'})
 
-figure(2)
+f2 = figure(2);
 semilogy(rpcholesky(:,2))
 hold on
 semilogy(greedy(:,2))
 semilogy(unif(:,2))
 semilogy(noprec(:,2))
-xlabel('Iteration'); ylabel('Test Accuracy')
+xlabel('Iteration'); ylabel('Test Error')
 legend({'RPCholesky','Greedy','Uniform','No Preconditioner'})
+
+%% Save
+saveas(f1,'../figs/exact_test_res.fig')
+saveas(f1,'../figs/exact_test_res.png')
+saveas(f2,'../figs/exact_test_err.fig')
+saveas(f2,'../figs/exact_test_err.png')
+save('../backups/exact_test.mat','rpcholesky','unif','noprec','greedy')

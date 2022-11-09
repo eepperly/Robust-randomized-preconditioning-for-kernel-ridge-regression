@@ -8,7 +8,7 @@ else
     Afun = A;
 end
 
-N = length(d);
+N = length(d); k = min(k,N);
 F = zeros(N,k); AS = zeros(N,k); S = zeros(k,1); i = 0;
 while i < k
     s = pivotselect(d,min(B,k-i));
