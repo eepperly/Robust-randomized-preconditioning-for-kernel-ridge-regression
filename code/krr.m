@@ -26,21 +26,19 @@ end
 Anum = isfloat(A);
 if Anum
     matvec = @(x) A*x + mu*x;
+    N = size(A,1);
 else
     matvec = @(x) kernmul(A,x) + mu*x;
+    N = size(d,1);
 end
 
 if contains(precname, 'nys')
     if contains(precname, 'rpc')
-        if ~Anum
-            F = rpcholeskyi(A,d,k,min(100,ceil(k/10)));
-        else
-            F = rpcholesky(A,k,min(100,ceil(k/10)));
-        end
-    elseif contains(precname,'greedy') && ~Anum
-        F = greedyi(A,d,k,1);
-    elseif contains(precname,'uni') && ~Anum
-        F = uniformi(A,k);
+        F = rpcholesky(A,k,min(100,ceil(k/10)),[],d);
+    elseif contains(precname,'greedy')
+        F = greedy(A,k,1,[],d);
+    elseif contains(precname,'uni')
+        F = uniform(A,k,N);
     else
         error('Other Nystrom preconditioners not yet implemented')
     end

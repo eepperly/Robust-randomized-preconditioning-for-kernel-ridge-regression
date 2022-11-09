@@ -1,15 +1,22 @@
-function [F,AS,S] = rpcholesky(A,k,B)
-N = size(A,1);
-F = zeros(N,k); AS = zeros(N,k); S = zeros(k,1); d = diag(A); i = 0;
-while i < k
-    s = unique(randsample(N,min(B,k-i),true,d));
-    S(i+1:i+length(s)) = s; 
-    AS = A(:,s);
-    G = AS - F(:,1:i) * F(s,1:i)';
-    R = chol(G(s,:));
-    F(:,i+1:i+length(s)) = G / R;
-    d = max(d - vecnorm(F(:,i+1:i+length(s)),2,2) .^ 2,0);
-    i = i+length(s);
+function [F,AS,S] = rpcholesky(A,k,B,varargin)
+%RPCHOLESKYI RPCholesky sampling for low-rank approximation
+
+if ~isempty(varargin) && ~isempty(varargin{1})
+    tol = varargin{1};
+else
+    tol = 0;
 end
+
+if length(varargin) > 1 && ~isfloat(A)
+    d = varargin{2};
+    N = length(d);
+elseif ~isfloat(A)
+    error('Must specify diagonal if A is an implicit matrix')
+else
+    d = [];
+    N = size(A,1);
+end
+[F,AS,S] = choleskybase(A,d,@(dd,m) unique(randsample(N,m,true,dd)),...
+    k,B,tol);
 end
 
