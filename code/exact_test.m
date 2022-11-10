@@ -1,6 +1,10 @@
+%% Set options
+implicit = false;
+N = 1e4;
+k = min(round(N/10),1000);
+
 %% Initialize data
 load('../data/homo.mat')
-N = 1e4;
 X_test = X(N+1:(2*N),:); Y_test = Y(N+1:(2*N));
 X = X(1:N,:); Y = Y(1:N);
 
@@ -18,19 +22,32 @@ a = 5120;
 
 % Kernel matrix
 kernel = @(X1,X2) exp(-pdist2(X1,X2,"minkowski",1)/a);
-A = kernel(X,X);
-Atest = kernel(X_test,X);
+if implicit
+    d = ones(N,1);
+    A = @(S) kernel(X,X(S,:));
+    Atest = @(S) kernel(X_test,X(S,:));
+else
+    A = kernel(X,X);
+    Atest = kernel(X_test,X);
+end
 
 % Stats
-test_accuracy = @(beta) norm(Atest*beta - Y_test,1) / length(Y_test);
-relres = @(beta) norm(A*beta + mu*beta - Y) / norm(Y);
+if implicit
+    test_accuracy = @(beta) norm(kernmul(Atest,beta) - Y_test,1) ...
+        / length(Y_test);
+    relres = @(beta) norm(kernmul(A,beta) + mu*beta - Y) / norm(Y);
+else
+    test_accuracy = @(beta) norm(Atest*beta - Y_test,1) / length(Y_test);
+    relres = @(beta) norm(A*beta + mu*beta - Y) / norm(Y);
+end
 summary = @(beta) [relres(beta) test_accuracy(beta)];
 
 %% Run with RPCholesky and without
-[~,rpcholesky] = krr(A,mu,Y,500,[],summary,'rpcnys');
-[~,greedy] = krr(A,mu,Y,500,[],summary,'greedynys');
-[~,unif] = krr(A,mu,Y,500,[],summary,'uninys');
-[~,noprec] = krr(A,mu,Y,[],[],summary,'');
+[~,rpcholesky] = krr(A,mu,Y,k,[],summary,'rpcnys',500);
+[~,greedy] = krr(A,mu,Y,k,[],summary,'greedynys',500);
+[~,unif] = krr(A,mu,Y,k,[],summary,'uninys',500);
+[~,rlscores] = krr(A,mu,Y,k,[],summary,'rlsnys',500);
+[~,noprec] = krr(A,mu,Y,[],[],summary,'',500);
 
 %% Plots
 close all
@@ -40,18 +57,20 @@ semilogy(rpcholesky(:,1))
 hold on
 semilogy(greedy(:,1))
 semilogy(unif(:,1))
+semilogy(rlscores(:,1))
 semilogy(noprec(:,1))
 xlabel('Iteration'); ylabel('Relative Residual')
-legend({'RPCholesky','Greedy','Uniform','No Preconditioner'})
+legend({'RPCholesky','Greedy','Uniform','RLS','No Preconditioner'})
 
 f2 = figure(2);
 semilogy(rpcholesky(:,2))
 hold on
 semilogy(greedy(:,2))
 semilogy(unif(:,2))
+semilogy(rlscores(:,2))
 semilogy(noprec(:,2))
 xlabel('Iteration'); ylabel('Test Error')
-legend({'RPCholesky','Greedy','Uniform','No Preconditioner'})
+legend({'RPCholesky','Greedy','Uniform','RLS','No Preconditioner'})
 
 %% Save
 saveas(f1,'../figs/exact_test_res.fig')

@@ -23,6 +23,12 @@ else
     precname = 'nysrpc';
 end
 
+if length(varargin) > 3
+    numiters = varargin{4};
+else
+    numiters = 100;
+end
+
 Anum = isfloat(A);
 if Anum
     matvec = @(x) A*x + mu*x;
@@ -39,6 +45,8 @@ if contains(precname, 'nys')
         F = greedy(A,k,1,[],d);
     elseif contains(precname,'uni')
         F = uniform(A,k,N);
+    elseif contains(precname,'rls')
+        F = rls(A,k,N,d); %#ok<CMRLS> 
     else
         error('Other Nystrom preconditioners not yet implemented')
     end
@@ -49,6 +57,6 @@ else
     prec = @(x) x;
 end
 
-[x,~,stats] = mycg(matvec, prec, b,0,100,summary);
+[x,~,stats] = mycg(matvec,prec,b,0,numiters,summary);
 end
 
