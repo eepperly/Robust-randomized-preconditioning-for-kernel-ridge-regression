@@ -45,6 +45,8 @@ if contains(precname, 'nys')
         F = greedy(A,k,1,[],d);
     elseif contains(precname,'uni')
         F = uniform(A,k,N);
+    elseif contains(precname,'rls')
+        F = rls(A,k,N,d); %#ok<CMRLS> 
     else
         error('Other Nystrom preconditioners not yet implemented')
     end

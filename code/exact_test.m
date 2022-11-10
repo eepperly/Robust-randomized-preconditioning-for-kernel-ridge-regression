@@ -43,10 +43,11 @@ end
 summary = @(beta) [relres(beta) test_accuracy(beta)];
 
 %% Run with RPCholesky and without
-[~,rpcholesky] = krr(A,mu,Y,k,[],summary,'rpcnys');
-[~,greedy] = krr(A,mu,Y,k,[],summary,'greedynys');
-[~,unif] = krr(A,mu,Y,k,[],summary,'uninys');
-[~,noprec] = krr(A,mu,Y,[],[],summary,'');
+[~,rpcholesky] = krr(A,mu,Y,k,[],summary,'rpcnys',500);
+[~,greedy] = krr(A,mu,Y,k,[],summary,'greedynys',500);
+[~,unif] = krr(A,mu,Y,k,[],summary,'uninys',500);
+[~,rlscores] = krr(A,mu,Y,k,[],summary,'rlsnys',500);
+[~,noprec] = krr(A,mu,Y,[],[],summary,'',500);
 
 %% Plots
 close all
@@ -56,18 +57,20 @@ semilogy(rpcholesky(:,1))
 hold on
 semilogy(greedy(:,1))
 semilogy(unif(:,1))
+semilogy(rlscores(:,1))
 semilogy(noprec(:,1))
 xlabel('Iteration'); ylabel('Relative Residual')
-legend({'RPCholesky','Greedy','Uniform','No Preconditioner'})
+legend({'RPCholesky','Greedy','Uniform','RLS','No Preconditioner'})
 
 f2 = figure(2);
 semilogy(rpcholesky(:,2))
 hold on
 semilogy(greedy(:,2))
 semilogy(unif(:,2))
+semilogy(rlscores(:,2))
 semilogy(noprec(:,2))
 xlabel('Iteration'); ylabel('Test Error')
-legend({'RPCholesky','Greedy','Uniform','No Preconditioner'})
+legend({'RPCholesky','Greedy','Uniform','RLS','No Preconditioner'})
 
 %% Save
 saveas(f1,'../figs/exact_test_res.fig')
