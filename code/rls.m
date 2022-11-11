@@ -1,5 +1,7 @@
 function F = rls(A,k,varargin)
 %UNIFORM Ridge leverage score sampling for Nystrom approximation
+addpath("../recursive-nystrom")
+
 if ~isempty(varargin)
     N = varargin{1};
 elseif ~isfloat(A)
