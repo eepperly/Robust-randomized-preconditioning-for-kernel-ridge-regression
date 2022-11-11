@@ -1,4 +1,4 @@
-function [x,iter,stats] = mycg(matvec,prec,b,tol,maxit,varargin)
+function [x,iter,stats] = mycg(matvec,prec,b,tol,maxit,verbose,varargin)
 summary = [];
 if ~isempty(varargin)
     summary = varargin{1};
@@ -7,7 +7,9 @@ stats = [];
 x = zeros(size(b)); r = b; bnorm = norm(b); rnorm = bnorm;
 z = prec(r); p = z;
 for iter = 1:maxit
-    fprintf('%d\t%e\n',iter,rnorm/bnorm)
+    if verbose
+        fprintf('%d\t%e\n',iter,rnorm/bnorm)
+    end
     v = matvec(p);
     zr = z'*r; eta = zr / (v'*p);
     x = x + eta*p;

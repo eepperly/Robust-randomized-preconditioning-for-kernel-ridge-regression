@@ -39,12 +39,13 @@ else
 end
 
 if contains(precname, 'nys')
+    tol = 1e-9;
     if contains(precname, 'rpc')
-        F = rpcholesky(A,k,min(100,ceil(k/10)),[],d);
+        F = rpcholesky(A,k,min(20,ceil(k/10)),tol,d);
     elseif contains(precname,'greedy')
-        F = greedy(A,k,1,[],d);
+        F = greedy(A,k,1,tol,d);
     elseif contains(precname,'uni')
-        F = uniform(A,k,N);
+        F = uniform(A,k,N, tol);
     elseif contains(precname,'rls')
         F = rls(A,k,N,d); %#ok<CMRLS> 
     else
@@ -52,11 +53,11 @@ if contains(precname, 'nys')
     end
     [U,S,~] = svd(F,'econ');
     d = 1 ./ (diag(S) .^2 + mu) - 1/mu; % Form preconditioner
-    prec = @(x) U*(d.*(U'*x)) + x/mu;
+    prec = @(x) U*(d.*(U'*x(:))) + x/mu;
 else
     prec = @(x) x;
 end
 
-[x,~,stats] = mycg(matvec,prec,b,0,numiters,summary);
+[x,~,stats] = mycg(matvec,prec,b,1e-12,numiters,false,summary);
 end
 
