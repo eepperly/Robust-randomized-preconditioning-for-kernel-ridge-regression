@@ -6,8 +6,7 @@
 ** Add FALKON submodule
 In order to run the experiments involving FALKON you have to run the following commands.
 #+begin_src shell
-$ git module init
-$ git submodule update
+$ git submodule update --init
 #+end_src
 Then follow the instructions in the [[https://github.com/LCSL/FALKON_paper#installation-on-linux][FALKON readme]].
 ** Downloading the data
