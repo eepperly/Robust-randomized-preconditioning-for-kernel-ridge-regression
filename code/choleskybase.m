@@ -13,11 +13,12 @@ F = zeros(N,k); AS = zeros(N,k); S = zeros(k,1); i = 0;
 while i < k
     s = pivotselect(d,min(B,k-i));
     S(i+1:i+length(s)) = s; 
-    AS = Afun(s);
-    G = AS - F(:,1:i) * F(s,1:i)';
+    AS_new = Afun(s);
+    G = AS_new - F(:,1:i) * F(s,1:i)';
     H = G(s,:);
     R = chol(H + trace(H)*eps*eye(size(H,1)));
     F(:,i+1:i+length(s)) = G / R;
+    AS(:,i+1:i+length(s)) = AS_new;
     d = max(d - vecnorm(F(:,i+1:i+length(s)),2,2) .^ 2,0);
     i = i+length(s);
     if sum(d) < tol
