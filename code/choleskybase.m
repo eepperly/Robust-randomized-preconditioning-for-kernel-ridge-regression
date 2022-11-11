@@ -15,7 +15,8 @@ while i < k
     S(i+1:i+length(s)) = s; 
     AS = Afun(s);
     G = AS - F(:,1:i) * F(s,1:i)';
-    R = chol(G(s,:));
+    H = G(s,:);
+    R = chol(H + trace(H)*eps*eye(size(H,1)));
     F(:,i+1:i+length(s)) = G / R;
     d = max(d - vecnorm(F(:,i+1:i+length(s)),2,2) .^ 2,0);
     i = i+length(s);
