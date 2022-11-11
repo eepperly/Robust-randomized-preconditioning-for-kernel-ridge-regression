@@ -29,6 +29,12 @@ else
     numiters = 100;
 end
 
+if length(varargin) > 4
+    tol = varargin{5};
+else
+    tol = [];
+end
+
 Anum = isfloat(A);
 if Anum
     matvec = @(x) A*x + mu*x;
@@ -41,7 +47,7 @@ end
 if contains(precname, 'nys')
     tol = 1e-9;
     if contains(precname, 'rpc')
-        F = rpcholesky(A,k,min(20,ceil(k/10)),tol,d);
+        F = rpcholesky(A,k,min(100,ceil(k/10)),tol,d);
     elseif contains(precname,'greedy')
         F = greedy(A,k,1,tol,d);
     elseif contains(precname,'uni')
