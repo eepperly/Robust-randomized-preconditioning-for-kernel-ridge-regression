@@ -6,6 +6,7 @@ addpath('../utils')
 implicit = false;
 N = 1e4;
 k = min(round(N/10),1000);
+numiters = 500;
 
 %% Initialize data
 load('../data/homo.mat')
@@ -49,11 +50,12 @@ end
 summary = @(beta) [relres(beta) test_accuracy(beta)];
 
 %% Run with RPCholesky and without
-[~,rpcholesky] = krr(A,mu,Y,k,[],summary,'rpcnys',500);
-[~,greedy] = krr(A,mu,Y,k,[],summary,'greedynys',500);
-[~,unif] = krr(A,mu,Y,k,[],summary,'uninys',500);
-[~,rlscores] = krr(A,mu,Y,k,[],summary,'rlsnys',500);
-[~,noprec] = krr(A,mu,Y,[],[],summary,'',500);
+[~,rpcholesky] = krr(A,mu,Y,k,[],summary,'rpcnys',numiters);
+[~,greedy] = krr(A,mu,Y,k,[],summary,'greedynys',numiters);
+[~,unif] = krr(A,mu,Y,k,[],summary,'uninys',numiters);
+[~,rlscores] = krr(A,mu,Y,k,[],summary,'rlsnys',numiters);
+[~,gauss] = krr(A,mu,Y,k,[],summary,'gaussnys',numiters);
+[~,noprec] = krr(A,mu,Y,[],[],summary,'',numiters);
 
 %% Plots
 close all
@@ -64,9 +66,10 @@ hold on
 semilogy(greedy(:,1))
 semilogy(unif(:,1))
 semilogy(rlscores(:,1))
+semilogy(gauss(:,1))
 semilogy(noprec(:,1))
 xlabel('Iteration'); ylabel('Relative Residual')
-legend({'RPCholesky','Greedy','Uniform','RLS','No Preconditioner'})
+legend({'RPCholesky','Greedy','Uniform','RLS','Gauss','No Preconditioner'})
 
 f2 = figure(2);
 semilogy(rpcholesky(:,2))
@@ -74,9 +77,9 @@ hold on
 semilogy(greedy(:,2))
 semilogy(unif(:,2))
 semilogy(rlscores(:,2))
+semilogy(gauss(:,2))
 semilogy(noprec(:,2))
 xlabel('Iteration'); ylabel('Test Error')
-legend({'RPCholesky','Greedy','Uniform','RLS','No Preconditioner'})
 
 %% Save
 resultsPath = createFolderForExecution("exact_test");
@@ -84,4 +87,4 @@ saveas(f1, fullfile(resultsPath, 'exact_test_res.fig'))
 saveas(f1, fullfile(resultsPath, 'exact_test_res.png'))
 saveas(f2, fullfile(resultsPath, 'exact_test_err.fig'))
 saveas(f2, fullfile(resultsPath, 'exact_test_err.png'))
-save(fullfile(resultsPath, 'state.mat'),'N', 'mu', 'k', 'implicit', 'bandwidth', 'rpcholesky','unif','noprec','greedy')
+save(fullfile(resultsPath, 'state.mat'))
