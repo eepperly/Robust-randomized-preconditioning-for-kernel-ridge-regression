@@ -7,25 +7,10 @@ implicit = false;
 N = 1e4;
 k = min(round(N/10),1000);
 
-%% Initialize data
-load('../data/homo.mat')
-X_test = X(N+1:(2*N),:); Y_test = Y(N+1:(2*N));
-X = X(1:N,:); Y = Y(1:N);
+load_chemistry_data
 
-% Standardization
-X_mean = mean(X); X_std = std(X);
-bad_idx = find(std(X) == 0);
-X(:,bad_idx) = []; X_test(:,bad_idx) = [];
-X_mean(bad_idx) = []; X_std(bad_idx) = [];
-X = (X - X_mean) ./ X_std;
-X_test = (X_test - X_mean) ./ X_std;
+%% Kernel matrix
 
-% Hyperparameters
-mu = N*1.0e-8;
-bandwidth = 5120;
-
-% Kernel matrix
-kernel = @(X1,X2) exp(-pdist2(X1,X2,"minkowski",1)/bandwidth);
 if implicit
     d = ones(N,1);
     A = @(S) kernel(X,X(S,:));
@@ -37,7 +22,7 @@ else
     fprintf('done!\n')
 end
 
-% Stats
+%% Stats
 if implicit
     test_accuracy = @(beta) norm(kernmul(Atest,beta) - Y_test,1) ...
         / length(Y_test);
