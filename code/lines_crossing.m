@@ -1,5 +1,8 @@
-%% Load data
+%% Set up workspace
+close all; clear; clc
+addpath('../utils')
 
+%% Load data
 load_higgs
 
 %% Test
@@ -9,7 +12,7 @@ qr_times = [];
 chol_times = [];
 falkon_times = [];
 for k = ks
-    fprintf('%d\n',k)
+    fprintf('k = %d\n',k)
     S = randsample(N,k,false);
     A_S = kernel(X,X(S,:));
     A_SS = A_S(S,:);
@@ -40,6 +43,7 @@ legend({'SP-QR','SP-Chol','FALKON','Direct'},'FontSize',20,...
 set(gca,'FontSize',20)
 
 %% Save
-saveas(gcf,'../figs/lines_crossing.png')
-saveas(gcf,'../figs/lines_crossing.fig')
-save('../backups/lines_crossing.mat','approx_times','direct_times')
+resultsPath = createFolderForExecution("lines_crossing");
+saveas(gcf, fullfile(resultsPath, 'lines_crossing.fig'))
+saveas(gcf, fullfile(resultsPath, 'lines_crossing.png'))
+save(fullfile(resultsPath, 'state.mat'))
