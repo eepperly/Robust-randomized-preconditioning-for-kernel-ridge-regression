@@ -50,7 +50,7 @@ if contains(precname, 'nys')
     elseif contains(precname,'greedy')
         F = greedy(A,k,1,tol,d);
     elseif contains(precname,'uni')
-        F = uniform(A,k,N);
+        [F,~,~,nu] = uniform(A,k,N);
     elseif contains(precname,'rls')
         F = rls(A,k,N,d); %#ok<CMRLS> 
     elseif contains(precname,'gauss')
@@ -59,7 +59,7 @@ if contains(precname, 'nys')
         error('Other Nystrom preconditioners not yet implemented')
     end
     [U,S,~] = svd(F,'econ');
-    if contains(precname,'gauss')
+    if contains(precname,'gauss') || contains(precname,'uni')
        d = 1./(max(diag(S).^2-nu,0)+mu)-1/mu; %Removes shift nu
     else
        d = 1 ./ (diag(S) .^2 + mu) - 1/mu; % Form preconditioner
