@@ -1,0 +1,11 @@
+.DS_Store
+.idea
+*.log
+tmp/
+
+data/*
+data/raw/*
+!data/raw/.gitkeep
+data/preprocessed/*
+!data/raw/.gitkeep
+results/*
