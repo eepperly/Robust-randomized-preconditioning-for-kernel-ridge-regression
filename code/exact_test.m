@@ -1,3 +1,7 @@
+%% Set up workspace 
+clear all; close all; clc;
+addpath('../utils')
+
 %% Set options
 implicit = false;
 N = 1e4;
@@ -6,13 +10,16 @@ k = min(round(N/10),1000);
 load_chemistry_data
 
 %% Kernel matrix
+
 if implicit
     d = ones(N,1);
     A = @(S) kernel(X,X(S,:));
     Atest = @(S) kernel(X_test,X(S,:));
 else
+    fprintf('Building kernel matrix... ')
     A = kernel(X,X);
     Atest = kernel(X_test,X);
+    fprintf('done!\n')
 end
 
 %% Stats
@@ -57,8 +64,9 @@ xlabel('Iteration'); ylabel('Test Error')
 legend({'RPCholesky','Greedy','Uniform','RLS','No Preconditioner'})
 
 %% Save
-saveas(f1,'../figs/exact_test_res.fig')
-saveas(f1,'../figs/exact_test_res.png')
-saveas(f2,'../figs/exact_test_err.fig')
-saveas(f2,'../figs/exact_test_err.png')
-save('../backups/exact_test.mat','rpcholesky','unif','noprec','greedy')
+resultsPath = createFolderForExecution("exact_test");
+saveas(f1, fullfile(resultsPath, 'exact_test_res.fig'))
+saveas(f1, fullfile(resultsPath, 'exact_test_res.png'))
+saveas(f2, fullfile(resultsPath, 'exact_test_err.fig'))
+saveas(f2, fullfile(resultsPath, 'exact_test_err.png'))
+save(fullfile(resultsPath, 'state.mat'),'N', 'mu', 'k', 'implicit', 'bandwidth', 'rpcholesky','unif','noprec','greedy')
