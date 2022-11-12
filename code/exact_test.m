@@ -1,12 +1,8 @@
-%% Set up workspace
 clear all; close all; clc;
-addpath('../utils')
-
 %% Set options
 implicit = false;
 N = 1e4;
 k = min(round(N/10),1000);
-
 %% Initialize data
 load('../data/homo.mat')
 X_test = X(N+1:(2*N),:); Y_test = Y(N+1:(2*N));
@@ -47,11 +43,11 @@ end
 summary = @(beta) [relres(beta) test_accuracy(beta)];
 
 %% Run with RPCholesky and without
-[~,rpcholesky] = krr(A,mu,Y,k,[],summary,'rpcnys',100);
-[~,greedy] = krr(A,mu,Y,k,[],summary,'greedynys',100);
-[~,unif] = krr(A,mu,Y,k,[],summary,'uninys',100);
-[~,rlscores] = krr(A,mu,Y,k,[],summary,'rlsnys',100);
-[~,noprec] = krr(A,mu,Y,[],[],summary,'',100);
+[~,rpcholesky] = krr(A,mu,Y,k,[],summary,'rpcnys',500);
+[~,greedy] = krr(A,mu,Y,k,[],summary,'greedynys',500);
+[~,unif] = krr(A,mu,Y,k,[],summary,'uninys',500);
+[~,rlscores] = krr(A,mu,Y,k,[],summary,'rlsnys',500);
+[~,noprec] = krr(A,mu,Y,[],[],summary,'',500);
 
 %% Plots
 close all
