@@ -1,13 +1,8 @@
 %% Set options
-implicit = false;
 N = 1e4;
 k = 2000;
 
 load_chemistry_data
-
-if implicit
-    error('Implicit not implemented for approximate KRR yet')
-end
 
 %% Kernel
 S = randsample(N,k,false);
