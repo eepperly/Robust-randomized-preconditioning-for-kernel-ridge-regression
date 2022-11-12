@@ -1,4 +1,7 @@
+%% Set up workspace 
 clear all; close all; clc;
+addpath('../utils')
+
 %% Set options
 implicit = false;
 N = 1e4;
@@ -7,13 +10,16 @@ k = min(round(N/10),1000);
 load_chemistry_data
 
 %% Kernel matrix
+
 if implicit
     d = ones(N,1);
     A = @(S) kernel(X,X(S,:));
     Atest = @(S) kernel(X_test,X(S,:));
 else
+    fprintf('Building kernel matrix... ')
     A = kernel(X,X);
     Atest = kernel(X_test,X);
+    fprintf('done!\n')
 end
 
 %% Stats
