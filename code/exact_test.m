@@ -87,4 +87,5 @@ saveas(f1, fullfile(resultsPath, 'exact_test_res.fig'))
 saveas(f1, fullfile(resultsPath, 'exact_test_res.png'))
 saveas(f2, fullfile(resultsPath, 'exact_test_err.fig'))
 saveas(f2, fullfile(resultsPath, 'exact_test_err.png'))
-save(fullfile(resultsPath, 'state.mat'))
+save(fullfile(resultsPath, 'state.mat'),'N','mu','k','implicit',...
+    'bandwidth','rpcholesky','unif','noprec','greedy','gauss')
