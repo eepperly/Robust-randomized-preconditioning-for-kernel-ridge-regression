@@ -1,8 +1,12 @@
+%% Set up workspace 
 clear all; close all; clc;
+addpath('../utils')
+
 %% Set options
 implicit = false;
 N = 1e4;
 k = min(round(N/10),1000);
+
 %% Initialize data
 load('../data/homo.mat')
 X_test = X(N+1:(2*N),:); Y_test = Y(N+1:(2*N));
@@ -27,8 +31,10 @@ if implicit
     A = @(S) kernel(X,X(S,:));
     Atest = @(S) kernel(X_test,X(S,:));
 else
+    fprintf('Building kernel matrix... ')
     A = kernel(X,X);
     Atest = kernel(X_test,X);
+    fprintf('done!\n')
 end
 
 % Stats
