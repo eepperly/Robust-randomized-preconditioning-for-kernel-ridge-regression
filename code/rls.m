@@ -1,5 +1,5 @@
 function F = rls(A,k,varargin)
-%UNIFORM Ridge leverage score sampling for Nystrom approximation
+%RLS Ridge leverage score sampling for Nystrom approximation
 addpath("../recursive-nystrom")
 
 if ~isempty(varargin)
@@ -30,7 +30,7 @@ function submatrix = Afun_to_kernel(A,rows,cols,d)
         submatrix = d; return
     end
     AS = A(cols);
-    submatrix = AS(rows);
+    submatrix = AS(rows,:);
 end
 
 function submatrix = Amat_to_kernel(A,rows,cols)
