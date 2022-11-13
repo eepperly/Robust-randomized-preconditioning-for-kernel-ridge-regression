@@ -1,4 +1,4 @@
-function [F,AS,S] = uniform(A,k,varargin)
+function [F,AS,S,nu] = uniform(A,k,varargin)
 %UNIFORM Uniform sampling for Nystrom approximation
 if ~isempty(varargin)
     N = varargin{1};
@@ -12,6 +12,8 @@ if isfloat(A)
 else
     AS = A(S);
 end
-A_SS = AS(S,:);
-F = AS / chol(A_SS + eps*trace(A_SS)*eye(k));
+nu = eps(norm(AS,'fro')); %Compute shift
+Y = AS + nu*sparse(S,1:k,ones(k,1),size(AS,1),size(AS,2));
+A_SS = Y(S,:);
+F = Y / chol(A_SS);
 end
