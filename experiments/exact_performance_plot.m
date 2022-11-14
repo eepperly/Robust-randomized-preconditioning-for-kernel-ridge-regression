@@ -1,53 +1,61 @@
 close all
 clear all
 addpath("../code") 
+addpath("../utils")
+resultsPath = createFolderForExecution("exact_performance_plot");
 
-% Gotta reproduce the results
+%% Parameters
+% For reproducibility purposes
 rng(926)
-rank = 800;
-N = 8000;
+rank = 500;
+N = 15000;
 Nts = 100;
-mu = 1e-10 * N;
+mu = 1e-8 * N;
+bandwidth = 10;
 num_iter = 250;
 kernel = "gaussian";
-problems = struct();
-% problems.a9a = ProblemParameters("a9a", 9, 1e-4, rank, kernel); % name, bandwidth, mu, approximation rank, kernel
-problems.cadata = ProblemParameters("cadata", 5, 1e-4, rank, kernel);
-problems.cod_rna = ProblemParameters("cod-rna", 5, 1e-4, rank, kernel);
-problems.connect_4 = ProblemParameters("connect-4", 5, 1e-4, rank, kernel);
-problems.covtype_binary = ProblemParameters("covtype.binary", 5, 1e-4, rank, kernel);
-problems.ijcnn1 = ProblemParameters("ijcnn1", 5, 1e-4, rank, kernel);
-problems.phishing = ProblemParameters("phishing", 5, 1e-4, rank, kernel);
-problems.sensit_vehicle = ProblemParameters("sensit_vehicle", 5, 1e-4, rank, kernel);
-problems.sensorless = ProblemParameters("sensorless", 5, 1e-4, rank, kernel);
-problems.skin_nonskin = ProblemParameters("skin_nonskin", 5, 1e-4, rank, kernel);
-problems.YearPredictionMSD = ProblemParameters("YearPredictionMSD", 5, 1e-4, rank, kernel);
-problems.w8a = ProblemParameters("w8a", 5, 1e-4, rank, kernel);
-problems.ACSIncome = ProblemParameters("ACSIncome", 5, 1e-4, rank, kernel);
-problems.Airlines_DepDelay_1M = ProblemParameters("Airlines_DepDelay_1M", 5, 1e-4, rank, kernel);
-% Saved with single precision ignoring from now 
-% problems.COMET_MC_SAMPLE = ProblemParameters("COMET_MC_SAMPLE", 5, 1e-4, rank, kernel);
-% problems.HIGGS = ProblemParameters("HIGGS", 5, 1e-4, rank, kernel);
-problems.creditcard = ProblemParameters("creditcard", 5, 1e-4, rank, kernel);
-problems.diamonds = ProblemParameters("diamonds", 5, 1e-4, rank, kernel);
-problems.hls4ml_lhc_jets_hlf = ProblemParameters("hls4ml_lhc_jets_hlf", 5, 1e-4, rank, kernel);
-problems.jannis = ProblemParameters("jannis", 5, 1e-4, rank, kernel);
-problems.Medical_Appointment = ProblemParameters("Medical-Appointment", 5, 1e-4, rank, kernel);
-% problems.MiniBoonNE = ProblemParameters("MiniBoonNE", 5, 1e-4, rank, kernel);
-problems.MNIST = ProblemParameters("MNIST", 5, 1e-4, rank, kernel);
-problems.santander = ProblemParameters("santander", 5, 1e-4, rank, kernel);
-problems.volkert = ProblemParameters("volkert", 5, 1e-4, rank, kernel);
-problems.yolanda = ProblemParameters("yolanda", 5, 1e-4, rank, kernel);
 
+problems = struct();
+% TODO: These datasets are having issues, fix them.
+% problems.HIGGS = ProblemParameters("HIGGS", bandwidth, mu, rank, kernel);
+% problems.MiniBoonNE = ProblemParameters("MiniBoonNE", bandwidth, mu, rank, kernel);
+
+problems.a9a = ProblemParameters("a9a", bandwidth, mu, rank, kernel); % name, bandwidth, mu, approximation rank, kernel
+problems.cadata = ProblemParameters("cadata", bandwidth, mu, rank, kernel);
+problems.cod_rna = ProblemParameters("cod-rna", bandwidth, mu, rank, kernel);
+problems.connect_4 = ProblemParameters("connect-4", bandwidth, mu, rank, kernel);
+problems.covtype_binary = ProblemParameters("covtype.binary", bandwidth, mu, rank, kernel);
+problems.ijcnn1 = ProblemParameters("ijcnn1", bandwidth, mu, rank, kernel);
+problems.phishing = ProblemParameters("phishing", bandwidth, mu, rank, kernel);
+problems.sensit_vehicle = ProblemParameters("sensit_vehicle", bandwidth, mu, rank, kernel);
+problems.sensorless = ProblemParameters("sensorless", bandwidth, mu, rank, kernel);
+problems.skin_nonskin = ProblemParameters("skin_nonskin", bandwidth, mu, rank, kernel);
+problems.YearPredictionMSD = ProblemParameters("YearPredictionMSD", bandwidth, mu, rank, kernel);
+problems.w8a = ProblemParameters("w8a", bandwidth, mu, rank, kernel);
+problems.ACSIncome = ProblemParameters("ACSIncome", bandwidth, mu, rank, kernel);
+problems.Airlines_DepDelay_1M = ProblemParameters("Airlines_DepDelay_1M", bandwidth, mu, rank, kernel);
+problems.COMET_MC_SAMPLE = ProblemParameters("COMET_MC_SAMPLE", bandwidth, mu, rank, kernel);
+problems.creditcard = ProblemParameters("creditcard", bandwidth, mu, rank, kernel);
+problems.diamonds = ProblemParameters("diamonds", bandwidth, mu, rank, kernel);
+problems.hls4ml_lhc_jets_hlf = ProblemParameters("hls4ml_lhc_jets_hlf", bandwidth, mu, rank, kernel);
+problems.jannis = ProblemParameters("jannis", bandwidth, mu, rank, kernel);
+problems.Medical_Appointment = ProblemParameters("Medical-Appointment", bandwidth, mu, rank, kernel);
+problems.MNIST = ProblemParameters("MNIST", bandwidth, mu, rank, kernel);
+problems.santander = ProblemParameters("santander", bandwidth, mu, rank, kernel);
+problems.volkert = ProblemParameters("volkert", bandwidth, mu, rank, kernel);
+problems.yolanda = ProblemParameters("yolanda", bandwidth, mu, rank, kernel);
+
+%% Experiment
 results = struct();
 names = fieldnames(problems);
 
 for k = 1:numel(names)
     fprintf('Solving %s\n',names{k})
-    try
     problem = problems.(names{k});
     [Xtr, Ytr, Xts, Yts] = problem.loaddata();
+    fprintf('\tOriginal training size n = %d, d = %d\n', size(Xtr, 1), size(Xtr,2));
     [Xtr, Ytr, Xts, Yts] = subsample(Xtr, Ytr, Xts, Yts, N, Nts);
+    fprintf('\tSubsampled training size n = %d, d = %d\n', size(Xtr, 1), size(Xtr,2));
     [Xtr, Xts] = standarize(Xtr, Xts);
     
     A = kernelmatrix(Xtr, Xtr, problem.Kernel, problem.Bandwidth);
@@ -57,14 +65,14 @@ for k = 1:numel(names)
     summary = @(beta) [relres(beta) test_accuracy(beta)];
     results.(names{k}) = struct();
     [~,results.(names{k}).rpc] = krr(A,problem.Mu,Ytr,problem.ApproximationRank,[],summary,'rpcnys',num_iter);
-    fprintf('\t RPC error last iter: %7.2e\n', results.(names{k}).rpc(end, 1));
+    fprintf('\t RPC last iter error : %7.2e\n', results.(names{k}).rpc(end, 1));
     [~,results.(names{k}).greedy] = krr(A,problem.Mu,Ytr,problem.ApproximationRank,[],summary,'greedynys',num_iter);
-    fprintf('\t Greedy error last iter: %7.2e\n', results.(names{k}).greedy(end, 1));    
+    fprintf('\t Greedy last iter error: %7.2e\n', results.(names{k}).greedy(end, 1));    
     [~,results.(names{k}).uniform] = krr(A,problem.Mu,Ytr,problem.ApproximationRank,[],summary,'uninys',num_iter);
-    fprintf('\t Uniform error last iter: %7.2e\n', results.(names{k}).uniform(end, 1));    
+    fprintf('\t Uniform last iter error: %7.2e\n', results.(names{k}).uniform(end, 1));    
     % [~,results.(names{k}).rls] = krr(A,problem.Mu,Ytr,problem.ApproximationRank,[],summary,'rlsnys',num_iter);
     [~,results.(names{k}).nopre] = krr(A,problem.Mu,Ytr,problem.ApproximationRank,[],summary,'',num_iter);
-    fprintf('\t No pre error last iter: %7.2e\n', results.(names{k}).nopre(end, 1));
+    fprintf('\t No precond last iter error: %7.2e\n', results.(names{k}).nopre(end, 1));
     f1 = figure(k);
     semilogy(results.(names{k}).rpc(:,1))
     hold on
@@ -74,18 +82,19 @@ for k = 1:numel(names)
     semilogy(results.(names{k}).nopre(:,1))
     xlabel('Iteration'); ylabel('Relative Residual')
     legend({'RPCholesky','Greedy','Uniform','No Preconditioner'})
-    saveas(f1,'../results/'+ string(names{k}) +'_exact_test_res.fig')
-    catch
-        warning('There was an error processing: ' + string(names{k}));
-    end
+    saveas(f1,fullfile(resultsPath, string(names{k}) +'_exact_test_res.fig'))
+    saveas(f1,fullfile(resultsPath, string(names{k}) +'_exact_test_res.png'))
 end
 
 %% Generate performance plot
 close all
-num_iter = 300;
 density = zeros(num_iter,4);
-accuracy = 1e-8;
+accuracy = 1e-6;
 for k = 1:numel(names)
+   display(names{k})
+   if (names{k}) == "skin_nonskin"
+       continue
+   end
    density(min(find(results.(names{k}).rpc(:,1) <= accuracy)), 1) = density(min(find(results.(names{k}).rpc(:,1) <= accuracy)), 1) + 1; 
    density(min(find(results.(names{k}).greedy(:,1) <= accuracy)), 2) = density(min(find(results.(names{k}).greedy(:,1) <= accuracy)), 2) + 1; 
    density(min(find(results.(names{k}).uniform(:,1) <= accuracy)), 3) = density(min(find(results.(names{k}).uniform(:,1) <= accuracy)), 3) + 1; 
@@ -106,7 +115,9 @@ plot(cumulative(:, 3))
 plot(cumulative(:, 4))
 xlabel('Iteration'); ylabel('Number of solved problems')
 legend({'RPCholesky','Greedy','Uniform','No Preconditioner'})
-saveas(fperformance,'../results/'+ string(accuracy) +'_performance.fig')
+saveas(fperformance,fullfile(resultsPath, 'performance.fig'))
+saveas(fperformance,fullfile(resultsPath, 'performance.png'))
+%save(fullfile(resultsPath, 'state.mat'))
 
 %% Auxiliary functions
 function [Xtr, Ytr, Xts, Yts] = subsample(Xtr, Ytr, Xts, Yts, Ntr, Nts)
@@ -121,7 +132,13 @@ end
 function [Xtr, Xts] = standarize(Xtr, Xts)
 X_mean = mean(Xtr); X_std = std(Xtr);
 bad_idx = find(std(Xtr) == 0);
-Xtr(:,bad_idx) = []; Xts(:,bad_idx) = [];
+Xtr(:,bad_idx) = []; 
+% TODO: There is a bug in the way LIBSVM loads their data, which only
+% affects a9a. This conditional is a hack to solve the issue. Implement
+% a better fix. 
+if max(bad_idx) <= size(Xts, 2)
+    Xts(:,bad_idx) = [];
+end
 X_mean(bad_idx) = []; X_std(bad_idx) = [];
 Xtr = (Xtr - X_mean) ./ X_std;
 Xts = (Xts - X_mean) ./ X_std;
