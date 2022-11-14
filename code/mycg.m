@@ -3,8 +3,17 @@ summary = [];
 if ~isempty(varargin)
     summary = varargin{1};
 end
+
+if length(varargin) > 1
+    x = varargin{2};
+    r = b - matvec(x);
+else
+    x = zeros(size(b)); 
+    r = b;
+end
+
 stats = [];
-x = zeros(size(b)); r = b; bnorm = norm(b); rnorm = bnorm;
+bnorm = norm(b); rnorm = bnorm;
 z = prec(r); p = z;
 for iter = 1:maxit
     if verbose
