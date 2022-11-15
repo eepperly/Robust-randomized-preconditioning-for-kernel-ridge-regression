@@ -1,7 +1,11 @@
 function b = kernslicemul(A_S,x,sz,varargin)
 %KERNSLICEMUL Multiply vector x by implicit kernel matrix A_S, A_S', or
 %A_S'*A_S
-if ~isempty(varargin) 
+% Optional arguments (set to [] for default values):
+% 1. option: either 'forward' (to compute A_S*x), 'adjoint' (to compute
+%    A_S'*x), or 'both' (to compute A_S'*(A_S*x))
+
+if ~isempty(varargin) && ~isempty(varargin{1})
     option = varargin{1};
 else
     option = 'both';

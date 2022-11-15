@@ -1,9 +1,14 @@
 function [x,iter,stats] = mycg(matvec,prec,b,tol,maxit,varargin)
+%MYCG Preconditioned conjugate gradient 
+% Optional arguments (set to [] for default values):
+% 1. summary: function mapping current CG iterate to a row vector of
+%    information to be returned in the 'stats' output
+% 2. x: initial iterate for CG
+
 summary = [];
 if ~isempty(varargin)
     summary = varargin{1};
 end
-
 
 if length(varargin) > 1 && ~isempty(varargin{2}) && norm(varargin{2}) ~= 0
     x = varargin{2};
