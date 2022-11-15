@@ -13,7 +13,7 @@ else
     r = b;
 end
 
-if length(varargin) > 2
+if length(varargin) > 2 && ~isempty(varargin{3})
     verbose = varargin{3};
 else
     verbose = false;

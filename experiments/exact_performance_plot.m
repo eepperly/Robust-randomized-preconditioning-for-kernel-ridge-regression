@@ -159,21 +159,17 @@ save(fullfile(resultsPath, 'state.mat'))
 
 %% Auxiliary functions
 function [Xtr, Ytr, Xts, Yts] = subsample(Xtr, Ytr, Xts, Yts, Ntr, Nts)
-if Ntr < size(Xtr, 1) 
-    Xtr = Xtr(1:Ntr,:); Ytr = Ytr(1:Ntr);
-end
-if Nts < size(Xts, 1) 
-    Xts = Xts(1:Nts,:); Yts = Yts(1:Nts);
-end
+Xtr = Xtr(1:min(Ntr, end),:); Ytr = Ytr(1:min(Ntr,end));
+Xts = Xts(1:min(Nts, end),:); Yts = Yts(1:min(Nts,end));
 end
 
 function [Xtr, Xts] = standarize(Xtr, Xts)
 X_mean = mean(Xtr); X_std = std(Xtr);
 bad_idx = find(std(Xtr) == 0);
-Xtr(:,bad_idx) = []; 
+Xtr(:,bad_idx) = [];
 % TODO: There is a bug in the way LIBSVM loads their data, which only
 % affects a9a. This conditional is a hack to solve the issue. Implement
-% a better fix. 
+% a better fix.
 if max(bad_idx) <= size(Xts, 2)
     Xts(:,bad_idx) = [];
 end
