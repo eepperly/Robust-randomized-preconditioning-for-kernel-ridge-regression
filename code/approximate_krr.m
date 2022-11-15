@@ -1,5 +1,13 @@
 function [w,stats] = approximate_krr(A_S,A_SS,mu,y,varargin)
 %APPROXIMATE_KRR Sketch and precondition for approximate KRR
+% Optional arguments (set to [] for default values):
+% 1. summary: function mapping current CG iterate to a row vector of
+%    information to be returned in the 'stats' output
+% 2. numiters: maximum number of CG iterations
+% 3. tol: relative tolerance for CG (i.e, CG stops after the residual is
+%    reduced to 'tol' times its inital value
+% 4. precname: name of preconditioner (defaults to 'spchol', the sketch and
+%    precondition approach using Cholesky factorization
 
 if ~isempty(varargin) && ~isempty(varargin{1})
     summary = varargin{1};
