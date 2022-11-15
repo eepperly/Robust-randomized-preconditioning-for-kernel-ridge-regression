@@ -4,7 +4,7 @@ function [x,iter,stats] = mycg(matvec,prec,b,tol,maxit,varargin)
 % 1. summary: function mapping current CG iterate to a row vector of
 %    information to be returned in the 'stats' output
 % 2. x: initial iterate for CG
-
+% 3. verbose: whether to print convergence statistics.
 summary = [];
 if ~isempty(varargin)
     summary = varargin{1};

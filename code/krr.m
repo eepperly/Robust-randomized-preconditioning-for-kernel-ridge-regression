@@ -6,13 +6,16 @@ function [x,stats] = krr(A,mu,b,k,varargin)
 % is passed in as optional argument.
 % Optional arguments (set to [] for default values):
 % 1. d: diagonal of matrix A. Value is only read if A is an implicit
-%    matrix. Defaults to all one's if not specified
+%    matrix. Defaults to all one's if not specified.
 % 2. summary: function mapping current CG iterate to a row vector of
-%    information to be returned in the 'stats' output
+%    information to be returned in the 'stats' output.
 % 3. precname: name of preconditioner (defaults to 'nysrpc', RPCholesky
-%    preconditioning)
-% 4. numiters: maximum number of CG iterations
-% 5. choltol: relative tolerance for Cholesky-based Nystroms
+%    preconditioning).
+% 4. numiters: maximum number of CG iterations (defaults to 100).
+% 5. choltol: relative tolerance for Cholesky-based Nystroms (defaults to zero).
+% 6. pcgtol: relative tolerance for CG, i.e, CG stops after the residual is
+%    reduced to 'pcgtol' times its inital value (defaults to 0).
+% 7. verbose: whether to print iteration information (defaults to false).
 
 if isfloat(A)
     d = diag(A);
@@ -28,26 +31,32 @@ else
     summary = @(x) [];
 end
 
-if length(varargin) > 2
+if length(varargin) > 2 &&  ~isempty(varargin{3})
     precname = varargin{3};
-else 
+else
     precname = 'nysrpc';
 end
 
-if length(varargin) > 3
+if length(varargin) > 3 &&  ~isempty(varargin{4})
     numiters = varargin{4};
 else
     numiters = 100;
 end
 
-if length(varargin) > 4
+if length(varargin) > 4 &&  ~isempty(varargin{5})
     choltol = varargin{5};
 else
     choltol = [];
 end
 
-if length(varargin) > 5
-    verbose = varargin{6};
+if length(varargin) > 5 &&  ~isempty(varargin{6})
+    pcgtol = varargin{6};
+else
+    pcgtol = [];
+end
+
+if length(varargin) > 6 &&  ~isempty(varargin{7})
+    verbose = varargin{7};
 else
     verbose = false;
 end
@@ -86,6 +95,6 @@ else
     prec = @(x) x;
 end
 
-[x,~,stats] = mycg(matvec,prec,b,1e-12,numiters,summary,[],verbose);
+[x,~,stats] = mycg(matvec,prec,b,pcgtol,numiters,summary,[],verbose);
 end
 
