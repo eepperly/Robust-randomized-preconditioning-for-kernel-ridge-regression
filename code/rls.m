@@ -1,5 +1,5 @@
 function F = rls(A,k,varargin)
-%UNIFORM Ridge leverage score sampling for Nystrom approximation
+%RLS Ridge leverage score sampling for Nystrom approximation
 % Optional arguments (set to [] for default values):
 % 1. d: diagonal of matrix A. Value is only read if A is an implicit
 %    matrix, in which case it *must* be specified
@@ -32,7 +32,7 @@ function submatrix = Afun_to_kernel(A,rows,cols,d)
         submatrix = d; return
     end
     AS = A(cols);
-    submatrix = AS(rows);
+    submatrix = AS(rows,:);
 end
 
 function submatrix = Amat_to_kernel(A,rows,cols)
