@@ -1,17 +1,19 @@
 function F = rls(A,k,varargin)
 %UNIFORM Ridge leverage score sampling for Nystrom approximation
+% Optional arguments (set to [] for default values):
+% 1. d: diagonal of matrix A. Value is only read if A is an implicit
+%    matrix, in which case it *must* be specified
+
 addpath("../recursive-nystrom")
 
-if ~isempty(varargin)
-    N = varargin{1};
-elseif ~isfloat(A)
-    error('Need to input size if A is an implicit matrix')
-end
-
-if length(varargin) > 1
+if length(varargin) > 1 && ~isfloat(A)
     d = varargin{2};
+    N = length(d);
 elseif ~isfloat(A)
-    error('Need to input size if A is an implicit matrix')
+    error('Must specify diagonal if A is an implicit matrix')
+else
+    d = [];
+    N = size(A,1);
 end
 
 if isfloat(A)

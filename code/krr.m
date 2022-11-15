@@ -4,8 +4,20 @@ function [x,stats] = krr(A,mu,b,k,varargin)
 % function which outputs the requested columns of the matrix. Implicit A
 % assumes that the diagonal of the kernel is all ones unless the diagonal
 % is passed in as optional argument.
+% Optional arguments (set to [] for default values):
+% 1. d: diagonal of matrix A. Value is only read if A is an implicit
+%    matrix. Defaults to all one's if not specified
+% 2. summary: function mapping current CG iterate to a row vector of
+%    information to be returned in the 'stats' output
+% 3. precname: name of preconditioner (defaults to 'nysrpc', RPCholesky
+%    preconditioning)
+% 4. numiters: maximum number of CG iterations
+% 5. tol: relative tolerance for CG (i.e, CG stops after the residual is
+%    reduced to 'tol' times its inital value)
 
-if ~isempty(varargin) && ~isempty(varargin{1})
+if isfloat(A)
+    d = diag(A);
+elseif ~isempty(varargin) && ~isempty(varargin{1})
     d = varargin{1};
 else
     d = ones(size(b,1),1);

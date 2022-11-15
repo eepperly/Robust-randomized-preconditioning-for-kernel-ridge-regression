@@ -5,7 +5,7 @@ function [w,stats] = approximate_krr(A_S,A_SS,mu,y,varargin)
 %    information to be returned in the 'stats' output
 % 2. numiters: maximum number of CG iterations
 % 3. tol: relative tolerance for CG (i.e, CG stops after the residual is
-%    reduced to 'tol' times its inital value
+%    reduced to 'tol' times its inital value)
 % 4. precname: name of preconditioner (defaults to 'spchol', the sketch and
 %    precondition approach using Cholesky factorization
 
