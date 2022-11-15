@@ -16,8 +16,8 @@ classdef ProblemParameters
        end
        function [Xtr, Ytr, Xts, Yts] = loaddata(obj)
            load("../data/preprocessed/" + obj.Name + ".mat");
-           Ytr = Ytr(:);
-           Yts = Yts(:);
+           Ytr = cast(Ytr(:), 'double');
+           Yts = cast(Yts(:), 'double');
        end
 end
 end
