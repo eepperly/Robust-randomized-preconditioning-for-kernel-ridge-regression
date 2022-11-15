@@ -12,8 +12,7 @@ function [x,stats] = krr(A,mu,b,k,varargin)
 % 3. precname: name of preconditioner (defaults to 'nysrpc', RPCholesky
 %    preconditioning)
 % 4. numiters: maximum number of CG iterations
-% 5. tol: relative tolerance for CG (i.e, CG stops after the residual is
-%    reduced to 'tol' times its inital value)
+% 5. choltol: relative tolerance for Cholesky-based Nystroms
 
 if isfloat(A)
     d = diag(A);
@@ -42,9 +41,9 @@ else
 end
 
 if length(varargin) > 4
-    tol = varargin{5};
+    choltol = varargin{5};
 else
-    tol = [];
+    choltol = [];
 end
 
 Anum = isfloat(A);
@@ -58,9 +57,9 @@ end
 
 if contains(precname, 'nys')
     if contains(precname, 'rpc')
-        F = rpcholesky(A,k,min(100,ceil(k/10)),tol,d);
+        F = rpcholesky(A,k,min(100,ceil(k/10)),choltol,d);
     elseif contains(precname,'greedy')
-        F = greedy(A,k,1,tol,d);
+        F = greedy(A,k,1,choltol,d);
     elseif contains(precname,'uni')
         [F,~,~,nu] = uniform(A,k,N);
     elseif contains(precname,'rls')
