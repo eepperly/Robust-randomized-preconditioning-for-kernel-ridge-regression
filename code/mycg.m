@@ -4,7 +4,7 @@ if ~isempty(varargin)
     summary = varargin{1};
 end
 
-if length(varargin) > 1
+if length(varargin) > 1 && norm(varargin{2}) ~= 0
     x = varargin{2};
     r = b - matvec(x);
 else
