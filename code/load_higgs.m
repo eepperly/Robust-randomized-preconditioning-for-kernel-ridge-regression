@@ -6,7 +6,7 @@ Y = double(Ytr)'; Y_test = double(Yts)';
 N = size(X,1);
 
 % Standardization
-standarize(X, X_test);
+[X,X_test] = standarize(X, X_test);
 
 % Hyperparameters
 mu = N*1.0e-8;
