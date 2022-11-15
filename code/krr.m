@@ -35,6 +35,12 @@ else
     tol = [];
 end
 
+if length(varargin) > 5
+    verbose = varargin{6};
+else
+    verbose = false;
+end
+
 Anum = isfloat(A);
 if Anum
     matvec = @(x) A*x + mu*x;
@@ -52,7 +58,7 @@ if contains(precname, 'nys')
     elseif contains(precname,'uni')
         [F,~,~,nu] = uniform(A,k,N);
     elseif contains(precname,'rls')
-        F = rls(A,k,N,d); %#ok<CMRLS> 
+        F = rls(A,k,N,d); %#ok<CMRLS>
     elseif contains(precname,'gauss')
         [F,nu] = gauss_nystrom(A,k);
     else
@@ -60,15 +66,15 @@ if contains(precname, 'nys')
     end
     [U,S,~] = svd(F,'econ');
     if contains(precname,'gauss') || contains(precname,'uni')
-       d = 1./(max(diag(S).^2-nu,0)+mu)-1/mu; %Removes shift nu
+        d = 1./(max(diag(S).^2-nu,0)+mu)-1/mu; %Removes shift nu
     else
-       d = 1 ./ (diag(S) .^2 + mu) - 1/mu; % Form preconditioner
+        d = 1 ./ (diag(S) .^2 + mu) - 1/mu; % Form preconditioner
     end
     prec = @(x) U*(d.*(U'*x)) + x/mu;
 else
     prec = @(x) x;
 end
 
-[x,~,stats] = mycg(matvec,prec,b,1e-12,numiters,false,summary);
+[x,~,stats] = mycg(matvec,prec,b,1e-12,numiters,summary,[],verbose);
 end
 

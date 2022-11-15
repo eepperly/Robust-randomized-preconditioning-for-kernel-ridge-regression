@@ -1,15 +1,21 @@
-function [x,iter,stats] = mycg(matvec,prec,b,tol,maxit,verbose,varargin)
+function [x,iter,stats] = mycg(matvec,prec,b,tol,maxit,varargin)
 summary = [];
 if ~isempty(varargin)
     summary = varargin{1};
 end
 
-if length(varargin) > 1
+if length(varargin) > 1 && ~isempty(varargin{2})
     x = varargin{2};
     r = b - matvec(x);
 else
     x = zeros(size(b)); 
     r = b;
+end
+
+if length(varargin) > 2
+    verbose = varargin{3};
+else
+    verbose = false;
 end
 
 stats = [];
