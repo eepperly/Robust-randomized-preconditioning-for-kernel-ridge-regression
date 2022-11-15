@@ -1,9 +1,17 @@
 function [F,AS,S,nu] = uniform(A,k,varargin)
 %UNIFORM Uniform sampling for Nystrom approximation
-if ~isempty(varargin)
+% Optional arguments (set to [] for default values):
+% 1. N: size of matrix A. Value is only used if A is an implicit matrix, in
+%    which case N *must* be specified
+
+if ~isfloat(A)
+    if isempty(varargin)
+        error('Need to input size if A is an implicit matrix')
+    end
     N = varargin{1};
-elseif ~isfloat(A)
-    error('Need to input size if A is an implicit matrix')
+    assert(mod(N,1) == 0)
+else
+    N = size(A,1);
 end
 
 S = unique(randsample(N,k,false));
