@@ -45,7 +45,6 @@ else
 end
 
 if contains(precname, 'nys')
-    tol = 1e-9;
     if contains(precname, 'rpc')
         F = rpcholesky(A,k,min(100,ceil(k/10)),tol,d);
     elseif contains(precname,'greedy')
