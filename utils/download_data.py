@@ -4,7 +4,8 @@ import requests
 from libsvm.svmutil import svm_read_problem
 import openml
 import numpy as np
-from scipy.io import savemat 
+from scipy.io import savemat
+from scipy.sparse import csr_matrix
 from tqdm import tqdm
 import bz2
 import lzma
@@ -195,7 +196,7 @@ datasets_openml = {
 }
 
 # datasets_openml = {}
-# datasets_libsvm = {}
+datasets_libsvm = {}
 
 # TODO: Decide what to do with the following datasets. These are here since the LIBSVM fails to parse them,
 # but we want to include them later on.
@@ -281,5 +282,11 @@ for k, data in datasets_openml.items():
     else:
         raise Exception(f"Error with the data structure defining datsets, a (train, test) strategy needs to be provided for {k}")
 
+    # OpenML likes single precision, we don't.
+    Xtr = np.array(Xtr, dtype = np.float64)
+    Ytr = np.array(Ytr, dtype = np.float64)
+    Xts = np.array(Xts, dtype = np.float64)
+    Yts = np.array(Yts, dtype = np.float64)
+    
     datadir = {'Xtr': Xtr , 'Ytr': Ytr, 'Xts': Xts, 'Yts': Yts}
     savemat(mat_data_directory + k +".mat", datadir)   
