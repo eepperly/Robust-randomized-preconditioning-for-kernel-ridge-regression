@@ -8,7 +8,7 @@ resultsPath = createFolderForExecution("approximate_performance_plot");
 %% Parameters
 rng(926); % For reproducibility purposes
 N = 45000;
-k = 2000;
+k = 250; % Change to generate different plots
 Nts = 100;
 mu = 1e-8 * N;
 bandwidth = 100;
@@ -53,7 +53,7 @@ problems.yolanda = ProblemParameters("yolanda", bandwidth, mu, k, kernel);
 %% Experiment
 results = struct();
 names = fieldnames(problems);
-
+loadColors
 for j = 1:numel(names)
     fprintf('Solving %s\n',names{j})
     problem = problems.(names{j});
@@ -83,18 +83,18 @@ for j = 1:numel(names)
     fprintf('\tNo preconditioner iters: %d last iter error: %7.2e\n', size(results.(names{j}).noprec, 1), results.(names{j}).noprec(end, 1));
     
     f1 = figure(2*j - 1);
-    semilogy(results.(names{j}).krill(:,1))
+    semilogy(results.(names{j}).krill(:,1), 'Color', color3)
     hold on
-    semilogy(results.(names{j}).falkon(:,1))
-    semilogy(results.(names{j}).noprec(:,1))
+    semilogy(results.(names{j}).falkon(:,1), 'Color', color4)
+    semilogy(results.(names{j}).noprec(:,1), 'Color', color2)
     xlabel('Iteration'); ylabel('Relative Residual')
     legend({'KRILL (Ours)','FALKON'})
 
     f2 = figure(2*j);
-    semilogy(results.(names{j}).krill(:,2))
+    semilogy(results.(names{j}).krill(:,2), 'Color', color3)
     hold on
-    semilogy(results.(names{j}).falkon(:,2))
-    semilogy(results.(names{j}).noprec(:,2))
+    semilogy(results.(names{j}).falkon(:,2), 'Color', color5)
+    semilogy(results.(names{j}).noprec(:,2), 'Color', color2)
     xlabel('Iteration'); ylabel('Test error')
     legend({'KRILL (Ours)','FALKON', "No preconditioner"})
 
@@ -105,10 +105,9 @@ for j = 1:numel(names)
 end
 
 %% Generate performance plot
-close all
 loadColors
 density = zeros(num_iter,3);
-accuracy = 1e-4;
+accuracy = 1e-6 ;
 for j = 1:numel(names)
    density(min(find(results.(names{j}).krill(:,1) <= accuracy)), 1) = density(min(find(results.(names{j}).krill(:,1) <= accuracy)), 1) + 1;
    density(min(find(results.(names{j}).falkon(:,1) <= accuracy)), 2) = density(min(find(results.(names{j}).falkon(:,1) <= accuracy)), 2) + 1;
@@ -136,7 +135,7 @@ le = legend({'FALKON', 'No preconditioner', 'KRILL (Ours)'});
 set(gca,'FontSize',20)
 axis([0 50 0 1])
 saveas(fperformance,fullfile(resultsPath, 'performance.fig'))
-exportgraphics(fperformance,fullfile(resultsPath, 'performance.png'), 'Resolution',300)
+exportgraphics(fperformance,fullfile(resultsPath, 'performance.png'), 'Resolution', 300)
 
 %% Save everything
 save(fullfile(resultsPath, 'state.mat'), 'problems', 'results', 'N', 'mu', 'bandwidth', 'k' )
