@@ -41,8 +41,8 @@ function [w,stats] = approximate_krr(A_S,A_SS,mu,y,varargin)
     else
         verbose = false;
     end
-    %% Check errors
 
+    %% Check errors
     if size(A_SS,1) ~= size(A_SS,2)
         error('A_SS must be a square matrix')
     end
