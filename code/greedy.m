@@ -1,5 +1,9 @@
 function [F,AS,S] = greedy(A,k,B,varargin)
 %GREEDY Greedy pivoting for psd low-rank approximation
+% Optional arguments (set to [] for default values):
+% 1. tol: iterations stop early if trace(residulal) <= tol * trace(A)
+% 2. d: diagonal of matrix A. Value is only read if A is an implicit
+%    matrix, in which case it *must* be specified
 
 if ~isempty(varargin)
     tol = varargin{1};

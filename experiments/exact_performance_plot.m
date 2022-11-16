@@ -159,12 +159,7 @@ save(fullfile(resultsPath, 'state.mat'))
 
 %% Auxiliary functions
 function [Xtr, Ytr, Xts, Yts] = subsample(Xtr, Ytr, Xts, Yts, Ntr, Nts)
-if Ntr < size(Xtr, 1) 
-    Xtr = Xtr(1:Ntr,:); Ytr = Ytr(1:Ntr);
+Xtr = Xtr(1:min(Ntr, end),:); Ytr = Ytr(1:min(Ntr,end));
+Xts = Xts(1:min(Nts, end),:); Yts = Yts(1:min(Nts,end));
 end
-if Nts < size(Xts, 1) 
-    Xts = Xts(1:Nts,:); Yts = Yts(1:Nts);
-end
-end
-
 
