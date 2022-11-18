@@ -18,7 +18,6 @@ kernel = "gaussian";
 
 problems = struct();
 % TODO: These datasets are having issues, fix them.
-% problems.HIGGS = ProblemParameters("HIGGS", bandwidth, mu, rank, kernel);
 % problems.MiniBoonNE = ProblemParameters("MiniBoonNE", bandwidth, mu, rank, kernel);
 
 % WARNING: This problem has a very low numeric rank and requires a "large"
@@ -37,6 +36,7 @@ problems.sensit_vehicle = ProblemParameters("sensit_vehicle", bandwidth, mu, ran
 problems.sensorless = ProblemParameters("sensorless", bandwidth, mu, rank, kernel);
 problems.YearPredictionMSD = ProblemParameters("YearPredictionMSD", bandwidth, mu, rank, kernel);
 problems.w8a = ProblemParameters("w8a", bandwidth, mu, rank, kernel);
+problems.HIGGS = ProblemParameters("HIGGS", bandwidth, mu, rank, kernel);
 problems.ACSIncome = ProblemParameters("ACSIncome", bandwidth, mu, rank, kernel);
 problems.Airlines_DepDelay_1M = ProblemParameters("Airlines_DepDelay_1M", bandwidth, mu, rank, kernel);
 problems.COMET_MC_SAMPLE = ProblemParameters("COMET_MC_SAMPLE", bandwidth, mu, rank, kernel);
@@ -73,17 +73,17 @@ for k = 1:numel(names)
     
     results.(names{k}) = struct();
     tol = 1e-9;
-    [~,results.(names{k}).rpc] = krr(A,problem.Mu,Ytr,problem.ApproximationRank,[],summary,'rpcnys',num_iter,tol);
+    [~,results.(names{k}).rpc] = krr(A,problem.Mu,Ytr,problem.ApproximationRank,[],summary,'rpcnys',num_iter,tol,tol);
     fprintf('\tRPC iters: %d last iter error: %7.2e\n', size(results.(names{k}).rpc, 1), results.(names{k}).rpc(end, 1));
-    [~,results.(names{k}).greedy] = krr(A,problem.Mu,Ytr,problem.ApproximationRank,[],summary,'greedynys',num_iter,tol);
+    [~,results.(names{k}).greedy] = krr(A,problem.Mu,Ytr,problem.ApproximationRank,[],summary,'greedynys',num_iter,tol,tol);
     fprintf('\tGreedy iters: %d, last iter error: %7.2e\n', size(results.(names{k}).greedy, 1), results.(names{k}).greedy(end, 1));
-    [~,results.(names{k}).uniform] = krr(A,problem.Mu,Ytr,problem.ApproximationRank,[],summary,'uninys',num_iter,tol);
+    [~,results.(names{k}).uniform] = krr(A,problem.Mu,Ytr,problem.ApproximationRank,[],summary,'uninys',num_iter,tol,tol);
     fprintf('\tUniform iters: %d, last iter error: %7.2e\n', size(results.(names{k}).uniform, 1), results.(names{k}).uniform(end, 1));
-    [~,results.(names{k}).rls] = krr(A,problem.Mu,Ytr,problem.ApproximationRank,[],summary,'rlsnys',num_iter,tol);
+    [~,results.(names{k}).rls] = krr(A,problem.Mu,Ytr,problem.ApproximationRank,[],summary,'rlsnys',num_iter,tol,tol);
     fprintf('\tRLS iters: %d, last iter error: %7.2e\n', size(results.(names{k}).rls, 1), results.(names{k}).rls(end, 1));
-    [~,results.(names{k}).gaussian] = krr(A,problem.Mu,Ytr,problem.ApproximationRank,[],summary,'gaussnys',num_iter,tol);
+    [~,results.(names{k}).gaussian] = krr(A,problem.Mu,Ytr,problem.ApproximationRank,[],summary,'gaussnys',num_iter,tol,tol);
     fprintf('\tGaussian iters: %d, last iter error: %7.2e\n', size(results.(names{k}).gaussian, 1), results.(names{k}).gaussian(end, 1));
-    [~,results.(names{k}).nopre] = krr(A,problem.Mu,Ytr,problem.ApproximationRank,[],summary,'',num_iter,tol);
+    [~,results.(names{k}).nopre] = krr(A,problem.Mu,Ytr,problem.ApproximationRank,[],summary,'',num_iter,tol,tol);
     fprintf('\tNo precond iters: %d, last iter error: %7.2e\n\n', size(results.(names{k}).nopre, 1), results.(names{k}).nopre(end, 1));
 
     f1 = figure(2*k - 1);
@@ -156,10 +156,3 @@ exportgraphics(fperformance,fullfile(resultsPath, 'performance.png'), 'Resolutio
 
 %% Save everything
 save(fullfile(resultsPath, 'state.mat'))
-
-%% Auxiliary functions
-function [Xtr, Ytr, Xts, Yts] = subsample(Xtr, Ytr, Xts, Yts, Ntr, Nts)
-Xtr = Xtr(1:min(Ntr, end),:); Ytr = Ytr(1:min(Ntr,end));
-Xts = Xts(1:min(Nts, end),:); Yts = Yts(1:min(Nts,end));
-end
-
