@@ -16,3 +16,17 @@ $ cd utils
 $ python download_data.py
 #+end_src
 Note that this will download and decompress several files and might take a while.
+
+** Style guidelines
+To load our color palette, run
+#+begin_src matlab
+loadColors
+#+end_src
+
+To plot any figure use the following color and style assignment:
+
++ =('Color', color1)= and =('LineStyle', '-.')=  are used for *Greedy* and *FALKON*.
++ =('Color', color2)= and =('LineStyle', '-o')=  is used for *Gaussian*.
++ =('Color', color3)= is used for *RPC* and *KRILL*.
++ =('Color', color4)= and =('LineStyle', '--')= is used for *Uniform*.
++ =('Color', color5)= and =('LineStyle', ':')= is used for *No preconditioner*.
