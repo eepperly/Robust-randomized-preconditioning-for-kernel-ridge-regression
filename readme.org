@@ -25,8 +25,8 @@ loadColors
 
 To plot any figure use the following color and style assignment:
 
-+ (='Color'=, =color1=) and (='LineStyle'=, ='-.'=)  are used for *Greedy* and *FALKON*.
-+ (='Color'=, =color2=) and (='LineStyle'=, ='-o'=)  is used for *Gaussian*.
-+ (='Color'=, =color3=) is used for *RPC* and *KRILL*.
-+ (='Color'=, =color4=) and (='LineStyle'=, ='--'=) is used for *Uniform*.
-+ (='Color'=, =color5=) and (='LineStyle'=, =':'=) is used for *No preconditioner*.
++ =('Color', color1)= and =('LineStyle', '-.')=  are used for *Greedy* and *FALKON*.
++ =('Color', color2)= and =('LineStyle', '-o')=  is used for *Gaussian*.
++ =('Color', color3)= is used for *RPC* and *KRILL*.
++ =('Color', color4)= and =('LineStyle', '--')= is used for *Uniform*.
++ =('Color', color5)= and =('LineStyle', ':')= is used for *No preconditioner*.
