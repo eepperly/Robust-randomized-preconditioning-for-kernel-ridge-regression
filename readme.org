@@ -1,6 +1,5 @@
 #+TITLE: Fast and efficient Kernel Ridge Regression Preconditioning
 
-
 *Warning: the instructions assume that your current working directory is the base of this repository.*
 
 ** Add FALKON submodule
@@ -30,6 +29,7 @@ loadColors
 #+end_src
 
 To plot any figure use the following color and style assignment:
+
 + (='Color'=, =color1=) and (='LineStyle'=, ='-.'=)  are used for *Greedy* and *FALKON*.
 + (='Color'=, =color2=) and (='LineStyle'=, ='-s'=)  is used for *Gaussian*.
 + (='Color'=, =color3=) is used for *RPC* and *KRILL*.
