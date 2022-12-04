@@ -53,6 +53,8 @@ problems.yolanda = ProblemParameters("yolanda", bandwidth, mu, rank, kernel);
 
 
 %% Experiment
+loadFont
+loadColors
 results = struct();
 names = fieldnames(problems);
 
@@ -79,34 +81,26 @@ for k = 1:numel(names)
     fprintf('\tGreedy iters: %d, last iter error: %7.2e\n', size(results.(names{k}).greedy, 1), results.(names{k}).greedy(end, 1));
     [~,results.(names{k}).uniform] = krr(A,problem.Mu,Ytr,problem.ApproximationRank,[],summary,'uninys',num_iter,tol,tol);
     fprintf('\tUniform iters: %d, last iter error: %7.2e\n', size(results.(names{k}).uniform, 1), results.(names{k}).uniform(end, 1));
-    [~,results.(names{k}).rls] = krr(A,problem.Mu,Ytr,problem.ApproximationRank,[],summary,'rlsnys',num_iter,tol,tol);
-    fprintf('\tRLS iters: %d, last iter error: %7.2e\n', size(results.(names{k}).rls, 1), results.(names{k}).rls(end, 1));
-    [~,results.(names{k}).gaussian] = krr(A,problem.Mu,Ytr,problem.ApproximationRank,[],summary,'gaussnys',num_iter,tol,tol);
-    fprintf('\tGaussian iters: %d, last iter error: %7.2e\n', size(results.(names{k}).gaussian, 1), results.(names{k}).gaussian(end, 1));
     [~,results.(names{k}).nopre] = krr(A,problem.Mu,Ytr,problem.ApproximationRank,[],summary,'',num_iter,tol,tol);
     fprintf('\tNo precond iters: %d, last iter error: %7.2e\n\n', size(results.(names{k}).nopre, 1), results.(names{k}).nopre(end, 1));
 
     f1 = figure(2*k - 1);
-    semilogy(results.(names{k}).rpc(:,1))
+    semilogy(results.(names{k}).greedy(:,1), 'Color', color1, 'LineStyle', '-.')
     hold on
-    semilogy(results.(names{k}).gaussian(:,1))
-    semilogy(results.(names{k}).greedy(:,1))
-    semilogy(results.(names{k}).rls(:,1))
-    semilogy(results.(names{k}).uniform(:,1))
-    semilogy(results.(names{k}).nopre(:,1))
+    semilogy(results.(names{k}).uniform(:,1), 'Color', color4, 'LineStyle', '--')
+    semilogy(results.(names{k}).nopre(:,1), 'Color', color5, 'LineStyle', ':')
+    semilogy(results.(names{k}).rpc(:,1), 'Color', color3)
     xlabel('Iteration'); ylabel('Relative Residual')
-    legend({'RPCholesky','Gaussian','Greedy', 'RLS', 'Uniform','No Preconditioner'})
+    legend({'Greedy', 'Uniform','No Preconditioner','RPCholesky'})
 
     f2 = figure(2*k);
-    semilogy(results.(names{k}).rpc(:,2))
+    semilogy(results.(names{k}).greedy(:,2), 'Color', color1, 'LineStyle', '-.')
     hold on
-    semilogy(results.(names{k}).gaussian(:,2))
-    semilogy(results.(names{k}).greedy(:,2))
-    semilogy(results.(names{k}).rls(:,2))
-    semilogy(results.(names{k}).uniform(:,2))
-    semilogy(results.(names{k}).nopre(:,2))
+    semilogy(results.(names{k}).uniform(:,2), 'Color', color4, 'LineStyle', '--')
+    semilogy(results.(names{k}).nopre(:,2), 'Color', color5, 'LineStyle', ':')
+    semilogy(results.(names{k}).rpc(:,2), 'Color', color3)
     xlabel('Iteration'); ylabel('Test error')
-    legend({'RPCholesky','Gaussian','Greedy', 'RLS', 'Uniform','No Preconditioner'})
+    legend({'Greedy', 'Uniform','No Preconditioner','RPCholesky'})
 
     saveas(f1,fullfile(resultsPath, string(names{k}) +'_exact_test_res.fig'))
     saveas(f1,fullfile(resultsPath, string(names{k}) +'_exact_test_res.png'))
@@ -116,8 +110,9 @@ end
 
 %% Generate performance plot
 close all
+loadFont
 loadColors
-density = zeros(num_iter,6);
+density = zeros(num_iter,4);
 accuracy = 1e-6;
 for k = 1:numel(names)
    display(names{k})
@@ -125,11 +120,9 @@ for k = 1:numel(names)
    density(min(find(results.(names{k}).greedy(:,1) <= accuracy)), 2) = density(min(find(results.(names{k}).greedy(:,1) <= accuracy)), 2) + 1; 
    density(min(find(results.(names{k}).uniform(:,1) <= accuracy)), 3) = density(min(find(results.(names{k}).uniform(:,1) <= accuracy)), 3) + 1; 
    density(min(find(results.(names{k}).nopre(:,1) <= accuracy)), 4) = density(min(find(results.(names{k}).nopre(:,1) <= accuracy)), 4) + 1; 
-   density(min(find(results.(names{k}).gaussian(:,1) <= accuracy)), 5) = density(min(find(results.(names{k}).gaussian(:,1) <= accuracy)), 5) + 1; 
-   density(min(find(results.(names{k}).rls(:,1) <= accuracy)), 6) = density(min(find(results.(names{k}).rls(:,1) <= accuracy)), 6) + 1; 
 end
 
-cumulative = zeros(num_iter,6);
+cumulative = zeros(num_iter,4);
 cumulative(1, :) = density(1, :);
 for k = 2:num_iter
     cumulative(k, :) = density(k, :) + cumulative(k-1, :);
@@ -139,18 +132,15 @@ fperformance = figure();
 numberproblems = numel(names);
 
 % TODO: Decide whether to include Gaussian in this plot.
-% plot(cumulative(:, 5)/numberproblems, 'Linewidth', 4, 'Color', 'black') % Gaussian
-plot(cumulative(:, 2)/numberproblems, 'Linewidth', 4, 'Color', color1) % Greedy
+plot(cumulative(:, 2)/numberproblems, 'Color', color1, 'LineStyle', '-.') % Greedy
 hold on
-plot(cumulative(:, 6)/numberproblems, 'Linewidth', 4, 'Color', color2) % RLS
-plot(cumulative(:, 3)/numberproblems, 'Linewidth', 4, 'Color', color4) % Uniform
-plot(cumulative(:, 4)/numberproblems, 'Linewidth', 4, 'Color', color5) % No preconditioner
-plot(cumulative(:, 1)/numberproblems, 'Linewidth', 4, 'Color', color3) % RPC
+plot(cumulative(:, 3)/numberproblems, 'Color', color4, 'LineStyle', '--') % Uniform
+plot(cumulative(:, 4)/numberproblems, 'Color', color5, 'LineStyle', ':') % No preconditioner
+plot(cumulative(:, 1)/numberproblems, 'Color', color3) % RPC
 ylim([0.0 1.0])
-xlabel('Iteration', 'FontSize', 24); 
-ylabel('Fraction of solved problems', 'FontSize', 24)
-le = legend({'Greedy', 'RLS', 'Uniform','No Preconditioner', 'RPCholesky (Ours)'}, 'Location', 'northwest');
-set(gca,'FontSize',20)
+xlabel('Iteration'); 
+ylabel('Fraction of solved problems')
+le = legend({'Greedy', 'Uniform','No Preconditioner', 'RPCholesky (Ours)'}, 'Location', 'northwest');
 saveas(fperformance,fullfile(resultsPath, 'performance.fig'))
 exportgraphics(fperformance,fullfile(resultsPath, 'performance.png'), 'Resolution',300)
 
