@@ -54,6 +54,7 @@ end
 %% Plots
 close all
 loadColors
+loadFont
 
 figs = cell(2,1);
 for j = 1:2

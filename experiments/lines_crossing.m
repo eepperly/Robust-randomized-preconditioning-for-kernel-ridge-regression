@@ -31,6 +31,8 @@ end
 %% Figure
 close all
 loadColors
+loadFont
+
 figure(1)
 loglog(ks,direct_times,'--','LineWidth',3,'Color',color4)
 hold on

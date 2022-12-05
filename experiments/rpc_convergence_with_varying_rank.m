@@ -3,6 +3,7 @@ clear; close all; clc;
 addpath('../utils')
 addpath('../code')
 resultsPath = createFolderForExecution("convergence_vs_rank");
+rng('default')
 
 %% Set options
 verbose = true;
@@ -40,6 +41,8 @@ end
 %% Plot 
 fperformance = figure();
 loadColors
+loadFont
+
 semilogx(ks, final_iter, 'Linewidth', 4, 'Color', color3)
 xlabel('Number of centers'); ylabel('Iterations to convergence');
 set(gca, 'FontSize', 22);
