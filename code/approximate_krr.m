@@ -28,10 +28,12 @@ function [w,stats] = approximate_krr(A_S,A_SS,mu,y,varargin)
         tol = 0;
     end
 
-    if length(varargin) > 3 && ~isempty(varargin{4})
+    if length(varargin) > 3 && (((ischar(varargin{4})...
+            || isstring(varargin{4})) && strcmp(varargin{4},'')) ...
+            || ~isempty(varargin{4}))
         precname = varargin{4};
     else
-        precname = 'spqr';
+        precname = 'spchol';
     end
 
     if length(varargin) > 4  && ~isempty(varargin{5})

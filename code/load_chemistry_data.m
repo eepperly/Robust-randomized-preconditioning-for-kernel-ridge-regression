@@ -1,19 +1,15 @@
 %% Initialize data
+addpath('../utils')
 load('../data/homo.mat')
-X_test = X(N+1:(2*N),:); Y_test = Y(N+1:(2*N));
+X_test = X(N+1:min((2*N), end),:); Y_test = Y(N+1:min((2*N), end));
 X = X(1:N,:); Y = Y(1:N);
 
 % Standardization
-X_mean = mean(X); X_std = std(X);
-bad_idx = find(std(X) == 0);
-X(:,bad_idx) = []; X_test(:,bad_idx) = [];
-X_mean(bad_idx) = []; X_std(bad_idx) = [];
-X = (X - X_mean) ./ X_std;
-X_test = (X_test - X_mean) ./ X_std;
+[X,X_test] = standarize(X, X_test);
 
 % Hyperparameters
 mu = N*1.0e-8;
-a = 5120;
+bandwidth = 5120;
 
 % Kernel
-kernel = @(X1,X2) exp(-pdist2(X1,X2,"minkowski",1)/a);
+kernel = @(X1,X2) kernelmatrix(X1, X2, 'laplace', bandwidth);
