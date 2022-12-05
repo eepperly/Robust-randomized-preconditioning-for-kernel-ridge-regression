@@ -17,6 +17,9 @@ $ python download_data.py
 Note that this will download and decompress several files and might take a while.
 
 ** Style guidelines
+
+*** Fonts and colors
+
 To load the right fonts, execute
 #+begin_src matlab
 addpath("../utils")
@@ -36,4 +39,10 @@ To plot any figure use the following color and style assignment:
 + =('Color', color4)= and =('LineStyle', '--')= is used for *Uniform*.
 + =('Color', color5)= and =('LineStyle', ':')= is used for *No preconditioner* and *Direct*.
 
-Please plot the curves associated to RPC and KRILL on top of all the other curves.
+*** Good practices
+
++ Make sure to fix the seed of your random number generator at the beginning of every script, e.g.,
+  #+begin_src matlab
+rng('default')
+  #+end_src
++ Please plot the curves associated to RPC and KRILL on top of all the other curves.
