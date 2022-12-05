@@ -76,8 +76,8 @@ for j = 1:2
     xlabel('Iteration');
     
     if j == 1
-        ylabel('Relative Residual')
-        legend({'No Preconditioner','Greedy','Uniform','RPCholesky'},'location','best','FontSize',20)
+        ylabel('Relative residual')
+        legend({'No preconditioner','Greedy','Uniform','RPCholesky'},'location','best','FontSize',20)
     else
         ylabel('SMAPE')
     end

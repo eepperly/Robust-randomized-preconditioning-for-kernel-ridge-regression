@@ -39,8 +39,8 @@ hold on
 loglog(ks,falkon_times,'-.','LineWidth',3,'Color',color1)
 loglog(ks,chol_times,'-','LineWidth',3,'Color',color3)
 axis([min(ks) max(ks) -Inf Inf])
-xlabel('Number of Centers $k$')
-ylabel('Computation Time (sec)')
+xlabel('Number of centers $k$')
+ylabel('Computation time (sec)')
 legend({'Direct','FALKON','KRILL'},'FontSize',20,...
     'Location','southeast')
 set(gca,'FontSize',20)
