@@ -34,6 +34,6 @@ To plot any figure use the following color and style assignment:
 + =('Color', color2)= and =('LineStyle', '-s')=  is used for *Gaussian*.
 + =('Color', color3)= is used for *RPC* and *KRILL*.
 + =('Color', color4)= and =('LineStyle', '--')= is used for *Uniform*.
-+ =('Color', color5)= and =('LineStyle', ':')= is used for *No preconditioner*.
++ =('Color', color5)= and =('LineStyle', ':')= is used for *No preconditioner* and *Direct*.
 
 Please plot the curves associated to RPC and KRILL on top of all the other curves.
