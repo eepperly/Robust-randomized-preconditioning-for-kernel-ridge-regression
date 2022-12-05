@@ -5,7 +5,9 @@ addpath('../code')
 resultsPath = createFolderForExecution("convergence_vs_rank");
 
 %% Set options
+verbose = true;
 N = 64e3;
+ks = [1e2 2e2 5e2 1e3 2e3 4e3, 8e3, 16e3, 32e3];
 numiters = 1000;
 pcgtol = 1e-4;
 choltol = 1e-9;
@@ -38,8 +40,8 @@ end
 %% Plot 
 fperformance = figure();
 loadColors
-loglog(ks, final_iter(:,1), 'Linewidth', 4, 'Color', color3)
-xlabel('Rank r of RPC preconditioner'); ylabel('Iterations to convergence');
+semilogx(ks, final_iter, 'Linewidth', 4, 'Color', color3)
+xlabel('Number of centers'); ylabel('Iterations to convergence');
 set(gca, 'FontSize', 22);
 %% Save everything
 saveas(fperformance,fullfile(resultsPath, 'convergence_vs_rank.fig'))
