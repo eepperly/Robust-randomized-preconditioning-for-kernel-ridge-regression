@@ -43,6 +43,6 @@ To plot any figure use the following color and style assignment:
 
 + Make sure to fix the seed of your random number generator at the beginning of every script, e.g.,
   #+begin_src matlab
-rng('default')
+  rng('default')
   #+end_src
 + Please plot the curves associated to RPC and KRILL on top of all the other curves.
