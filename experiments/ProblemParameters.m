@@ -18,6 +18,13 @@ classdef ProblemParameters
            load("../data/preprocessed/" + obj.Name + ".mat");
            Ytr = cast(Ytr(:), 'double');
            Yts = cast(Yts(:), 'double');
+           
+           % LIBSVM fails to save the right size for train and test, this
+           % is a hacky fix.
+           if obj.Name.contains("a9a")
+               Xtr = Xtr(:, 1:122);
+               Xts = Xts(:, 1:122);
+           end
        end
 end
 end

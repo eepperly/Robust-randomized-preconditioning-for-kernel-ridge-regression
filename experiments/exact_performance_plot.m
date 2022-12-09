@@ -113,7 +113,7 @@ close all
 loadFont
 loadColors
 density = zeros(num_iter,4);
-accuracy = 1e-6;
+accuracy = 1e-3;
 for k = 1:numel(names)
    display(names{k})
    density(min(find(results.(names{k}).rpc(:,1) <= accuracy)), 1) = density(min(find(results.(names{k}).rpc(:,1) <= accuracy)), 1) + 1; 
@@ -131,7 +131,6 @@ end
 fperformance = figure();
 numberproblems = numel(names);
 
-% TODO: Decide whether to include Gaussian in this plot.
 plot(cumulative(:, 2)/numberproblems, 'Color', color1, 'LineStyle', '-.') % Greedy
 hold on
 plot(cumulative(:, 3)/numberproblems, 'Color', color4, 'LineStyle', '--') % Uniform
@@ -141,8 +140,8 @@ ylim([0.0 1.0])
 xlabel('Iteration'); 
 ylabel('Fraction of solved problems')
 le = legend({'Greedy', 'Uniform','No Preconditioner', 'RPCholesky (Ours)'}, 'Location', 'northwest');
-saveas(fperformance,fullfile(resultsPath, 'performance.fig'))
-exportgraphics(fperformance,fullfile(resultsPath, 'performance.png'), 'Resolution',300)
+saveas(fperformance,fullfile(resultsPath, string(accuracy) + '_performance.fig'))
+exportgraphics(fperformance,fullfile(resultsPath, string(accuracy) + '_performance.png'), 'Resolution',300)
 
 %% Save everything
 save(fullfile(resultsPath, 'state.mat'))
