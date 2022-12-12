@@ -80,7 +80,7 @@ if contains(precname, 'nys')
     elseif contains(precname,'rls')
         F = rls(A,k,N,d); %#ok<CMRLS>
     elseif contains(precname,'gauss')
-        [F,nu] = gauss_nystrom(A,k);
+        [F,nu] = gauss_nystrom(A,k,N);
     else
         error('Other Nystrom preconditioners not yet implemented')
     end
