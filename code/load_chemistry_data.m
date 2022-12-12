@@ -1,7 +1,7 @@
 %% Initialize data
 addpath('../utils')
 load('../data/homo.mat')
-X_test = X(N+1:min(2*N,end),:); Y_test = Y(N+1:min(2*N,end));
+X_test = X(N+1:min((2*N), end),:); Y_test = Y(N+1:min((2*N), end));
 X = X(1:N,:); Y = Y(1:N);
 
 % Standardization

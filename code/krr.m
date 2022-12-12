@@ -31,7 +31,7 @@ else
     summary = @(x) [];
 end
 
-if length(varargin) > 2 &&  ~isempty(varargin{3})
+if length(varargin) > 2 && (ischar(varargin{3}) || isstring(varargin{3}))
     precname = varargin{3};
 else
     precname = 'nysrpc';
