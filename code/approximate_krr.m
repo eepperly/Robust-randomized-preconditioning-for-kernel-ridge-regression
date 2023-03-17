@@ -72,7 +72,7 @@ function [w,stats] = approximate_krr(A_S,A_SS,mu,y,varargin)
             [Q,R] = qr(B,0);
             w0 = R \ (Q(1:d,:)' * (Phi*y));
         else
-            H = PhiA_S'*PhiA_S + A_SS;
+            H = PhiA_S'*PhiA_S + mu*A_SS;
             R = chol(H + trace(H)*eps*eye(k));
             w0 = zeros(k,1);
         end
