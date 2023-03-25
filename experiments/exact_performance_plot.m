@@ -37,6 +37,7 @@ problems.sensit_vehicle = ProblemParameters("sensit_vehicle", bandwidth, mu, ran
 problems.sensorless = ProblemParameters("sensorless", bandwidth, mu, rank, kernel);
 problems.YearPredictionMSD = ProblemParameters("YearPredictionMSD", bandwidth, mu, rank, kernel);
 problems.w8a = ProblemParameters("w8a", bandwidth, mu, rank, kernel);
+problems.HIGGS = ProblemParameters("HIGGS", bandwidth, mu, rank, kernel);
 problems.ACSIncome = ProblemParameters("ACSIncome", bandwidth, mu, rank, kernel);
 problems.Airlines_DepDelay_1M = ProblemParameters("Airlines_DepDelay_1M", bandwidth, mu, rank, kernel);
 problems.COMET_MC_SAMPLE = ProblemParameters("COMET_MC_SAMPLE", bandwidth, mu, rank, kernel);
@@ -53,6 +54,8 @@ problems.yolanda = ProblemParameters("yolanda", bandwidth, mu, rank, kernel);
 
 
 %% Experiment
+loadFont
+loadColors
 results = struct();
 names = fieldnames(problems);
 loadColors
@@ -73,6 +76,7 @@ for k = 1:numel(names)
     
     results.(names{k}) = struct();
     tol = 1e-9;
+<<<<<<< HEAD
     
     num_repetitions = 5;
     
@@ -129,6 +133,34 @@ for k = 1:numel(names)
     xlabel('Iteration'); ylabel('Test error')
 %     legend({'RPCholesky','Gaussian','Greedy', 'RLS', 'Uniform','No Preconditioner'})
     legend({'RPCholesky', 'Greedy', 'Uniform', 'No Preconditioner'})
+=======
+    [~,results.(names{k}).rpc] = krr(A,problem.Mu,Ytr,problem.ApproximationRank,[],summary,'rpcnys',num_iter,tol,tol);
+    fprintf('\tRPC iters: %d last iter error: %7.2e\n', size(results.(names{k}).rpc, 1), results.(names{k}).rpc(end, 1));
+    [~,results.(names{k}).greedy] = krr(A,problem.Mu,Ytr,problem.ApproximationRank,[],summary,'greedynys',num_iter,tol,tol);
+    fprintf('\tGreedy iters: %d, last iter error: %7.2e\n', size(results.(names{k}).greedy, 1), results.(names{k}).greedy(end, 1));
+    [~,results.(names{k}).uniform] = krr(A,problem.Mu,Ytr,problem.ApproximationRank,[],summary,'uninys',num_iter,tol,tol);
+    fprintf('\tUniform iters: %d, last iter error: %7.2e\n', size(results.(names{k}).uniform, 1), results.(names{k}).uniform(end, 1));
+    [~,results.(names{k}).nopre] = krr(A,problem.Mu,Ytr,problem.ApproximationRank,[],summary,'',num_iter,tol,tol);
+    fprintf('\tNo precond iters: %d, last iter error: %7.2e\n\n', size(results.(names{k}).nopre, 1), results.(names{k}).nopre(end, 1));
+
+    f1 = figure(2*k - 1);
+    semilogy(results.(names{k}).greedy(:,1), 'Color', color1, 'LineStyle', '-.')
+    hold on
+    semilogy(results.(names{k}).uniform(:,1), 'Color', color4, 'LineStyle', '--')
+    semilogy(results.(names{k}).nopre(:,1), 'Color', color5, 'LineStyle', ':')
+    semilogy(results.(names{k}).rpc(:,1), 'Color', color3)
+    xlabel('Iteration'); ylabel('Relative Residual')
+    legend({'Greedy', 'Uniform','No Preconditioner','RPCholesky'})
+
+    f2 = figure(2*k);
+    semilogy(results.(names{k}).greedy(:,2), 'Color', color1, 'LineStyle', '-.')
+    hold on
+    semilogy(results.(names{k}).uniform(:,2), 'Color', color4, 'LineStyle', '--')
+    semilogy(results.(names{k}).nopre(:,2), 'Color', color5, 'LineStyle', ':')
+    semilogy(results.(names{k}).rpc(:,2), 'Color', color3)
+    xlabel('Iteration'); ylabel('Test error')
+    legend({'Greedy', 'Uniform','No Preconditioner','RPCholesky'})
+>>>>>>> main
 
 
     saveas(f1,fullfile(resultsPath, string(names{k}) +'_res.fig'))
@@ -139,17 +171,26 @@ end
 
 %% Generate performance plot
 close all
+loadFont
 loadColors
+<<<<<<< HEAD
 names = fieldnames(problems);
 density = zeros(num_iter,4);
 accuracy = 1e-8;
+=======
+density = zeros(num_iter,4);
+accuracy = 1e-6;
+>>>>>>> main
 for k = 1:numel(names)
    density(min(find(results.(names{k}).rpc(:,1) <= accuracy)), 1) = density(min(find(results.(names{k}).rpc(:,1) <= accuracy)), 1) + 1; 
    density(min(find(results.(names{k}).greedy(:,1) <= accuracy)), 2) = density(min(find(results.(names{k}).greedy(:,1) <= accuracy)), 2) + 1; 
    density(min(find(results.(names{k}).uniform(:,1) <= accuracy)), 3) = density(min(find(results.(names{k}).uniform(:,1) <= accuracy)), 3) + 1; 
    density(min(find(results.(names{k}).nopre(:,1) <= accuracy)), 4) = density(min(find(results.(names{k}).nopre(:,1) <= accuracy)), 4) + 1; 
+<<<<<<< HEAD
 %    density(min(find(results.(names{k}).gaussian(:,1) <= accuracy)), 5) = density(min(find(results.(names{k}).gaussian(:,1) <= accuracy)), 5) + 1; 
 %    density(min(find(results.(names{k}).rls(:,1) <= accuracy)), 6) = density(min(find(results.(names{k}).rls(:,1) <= accuracy)), 6) + 1; 
+=======
+>>>>>>> main
 end
 
 cumulative = zeros(num_iter,4);
@@ -161,6 +202,7 @@ end
 fperformance = figure();
 numberproblems = numel(names);
 
+<<<<<<< HEAD
 % TODO: Decide whether to include Gaussian and RLS in this plot.
 % plot(cumulative(:, 5)/numberproblems, 'Linewidth', 4, 'Color', 'black') % Gaussian
 plot(cumulative(:, 2)/numberproblems, 'Linewidth', 4, 'Color', color1) % Greedy
@@ -194,3 +236,20 @@ Xtr = Xtr(1:min(Ntr, end),:); Ytr = Ytr(1:min(Ntr,end));
 Xts = Xts(1:min(Nts, end),:); Yts = Yts(1:min(Nts,end));
 end
 
+=======
+% TODO: Decide whether to include Gaussian in this plot.
+plot(cumulative(:, 2)/numberproblems, 'Color', color1, 'LineStyle', '-.') % Greedy
+hold on
+plot(cumulative(:, 3)/numberproblems, 'Color', color4, 'LineStyle', '--') % Uniform
+plot(cumulative(:, 4)/numberproblems, 'Color', color5, 'LineStyle', ':') % No preconditioner
+plot(cumulative(:, 1)/numberproblems, 'Color', color3) % RPC
+ylim([0.0 1.0])
+xlabel('Iteration'); 
+ylabel('Fraction of solved problems')
+le = legend({'Greedy', 'Uniform','No Preconditioner', 'RPCholesky (Ours)'}, 'Location', 'northwest');
+saveas(fperformance,fullfile(resultsPath, 'performance.fig'))
+exportgraphics(fperformance,fullfile(resultsPath, 'performance.png'), 'Resolution',300)
+
+%% Save everything
+save(fullfile(resultsPath, 'state.mat'))
+>>>>>>> main
