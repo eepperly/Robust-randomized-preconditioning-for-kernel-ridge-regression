@@ -59,25 +59,26 @@ loadFont
 figs = cell(2,1);
 for j = 1:2
     figs{j} = figure(j);
-    semilogy(noprec(:,j),':','Color',color5,'LineWidth',3)
+    semilogy(0:numiters,noprec(:,j),':','Color',color5,'LineWidth',3)
     hold on
-    semilogy(greedy(:,j),'-.','Color',color1,'LineWidth',3)
-    semilogy(unif(:,j),'--','Color',color4,'LineWidth',3)
-    semilogy(rpcholesky(:,j),'Color',color3,'LineWidth',3)
+    semilogy(0:numiters,greedy(:,j),'-.','Color',color1,'LineWidth',3)
+    semilogy(0:numiters,unif(:,j),'--','Color',color4,'LineWidth',3)
+    semilogy(0:numiters,rpcholesky(:,j),'Color',color3,'LineWidth',3)
     if userls
-        semilogy(rlscores(:,j),'-*','Color',color6,'MarkerIndices',...
-            1:round(numiters/20):numiters,'MarkerSize',10)
+        semilogy(0:numiters,rlscores(:,j),'-*','Color',color6,...
+            'MarkerIndices',1:round(numiters/20):numiters,'MarkerSize',10)
     end
     if usegauss
-        semilogy(gauss(:,j),'-s','Color',color6,'MarkerIndices',...
-            1:round(numiters/20):numiters,'MarkerSize',10,'MarkerFaceColor',...
-            color2)
+        semilogy(0:numiters,gauss(:,j),'-s','Color',color6,...
+            'MarkerIndices',0:round(numiters/20):numiters,...
+            'MarkerSize',10,'MarkerFaceColor',color2)
     end
     xlabel('Iteration');
     
     if j == 1
         ylabel('Relative residual')
-        legend({'No preconditioner','Greedy','Uniform','RPCholesky'},'location','best','FontSize',20)
+        legend({'No preconditioner','Greedy','Uniform','RPCholesky'},...
+            'location','best','FontSize',20)
     else
         ylabel('SMAPE')
     end

@@ -30,11 +30,11 @@ loadColors
 close all
 
 f1 = figure(1);
-semilogy(stats(:,1),'Color',color3)
+semilogy(0:numiters,stats(:,1),'Color',color3)
 xlabel('Iteration'); ylabel('Relative Residual')
 
 f2 = figure(2);
-plot(stats(:,2),'Color',color3)
+plot(0:numiters,stats(:,2),'Color',color3)
 xlabel('Iteration'); ylabel('Mean Average Test Error (eV)')
 
 %% Save
