@@ -10,7 +10,7 @@ end
 
 N = length(d); k = min(k,N);
 F = zeros(N,k); AS = zeros(N,k); S = zeros(k,1); i = 0;
-scale = max(d);
+scale = 4 * max(d);
 while i < k
     s = pivotselect(d,min(B,k-i));
     S(i+1:i+length(s)) = s; 
