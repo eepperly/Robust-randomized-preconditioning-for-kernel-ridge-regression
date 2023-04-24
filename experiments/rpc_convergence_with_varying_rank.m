@@ -8,32 +8,20 @@ rng('default')
 %% Set options
 verbose = true;
 N = 1e5;
-ks = [1e2 2e2 5e2 1e3 2e3 5e3, 1e4, 2e4];
+ks = [1e2 2e2 5e2 1e3 2e3 5e3, 1e4];
 numiters = 1000;
 pcgtol = 1e-3;
 choltol = 1e-9;
-implicit = true;
 load_chemistry_data
 
 %% Kernel matrix
 
-if implicit
-    d = ones(N,1);
-    A = @(S) kernel(X,X(S,:));
-else
-    fprintf('Building kernel matrix... ')
-    A = kernel(X,X);
-    fprintf('done!\n')
-end
+fprintf('Building kernel matrix... ')
+A = kernel(X,X);
+fprintf('done!\n')
 
-%% Stats
-smape = @(x,y) mean(2 * abs(x-y) ./ (abs(x)+abs(y)));
-if implicit
-    relres = @(beta) norm(kernmul(A,beta) + mu*beta - Y) / norm(Y);
-else
-    relres = @(beta) norm(A*beta + mu*beta - Y) / norm(Y);
-end
-summary = @(beta) relres(beta);
+relres = @(beta) norm(A*beta + mu*beta - Y) / norm(Y);
+summary = @(beta) [relres(beta)];
 
 %% Experiment
 results = zeros(numiters, length(ks));
