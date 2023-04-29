@@ -1,8 +1,6 @@
-#+BEGIN_EXPORT html
-<p align="center">
-  <img src=".github/assets/krill.png" width="300"/>
-</p>
-#+END_EXPORT
+#+html: <p align="center">
+#+html:  <img src=".github/assets/krill.png" width="300"/>
+#+html: </p>
 
 #+TITLE: Robust, randomized precondinioning for KRR
 
