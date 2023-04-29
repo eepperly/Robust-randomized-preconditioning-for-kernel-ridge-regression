@@ -1,15 +1,33 @@
+#+BEGIN_EXPORT html
+<p align="center">
+  <img src=".github/assets/krill.png" width="300"/>
+</p>
+#+END_EXPORT
+
 #+TITLE: Robust, randomized precondinioning for KRR
+
 
 This repository contains code accompanying the paper [[https://arxiv.org/abs/2304.12465][Robust, randomized precondinioning for kernel ridge regression]]. It includes simple implementations of the RPCholesky and KRILL preconditioners and scripts to run all the numerical experiments in the paper.
 
 *Warning: the instructions assume that your current working directory is the base of this repository.*
 
+* One-time setup
+Consider creating a virtual enviroment for this project. For example, by running:
+#+begin_src shell
+$ python -m venv .venv
+$ source .venv/bin/activate
+#+end_src
+
+Then, install the requirements:
+#+begin_src shell
+$ pip install -r requirements.txt
+#+end_src
 
 * Downloading the data
 To download the data for the performance plots run:
 #+begin_src shell
 $ cd utils
-$ python experiments/download_data.py
+$ python download_data.py
 #+end_src
 Note that this will download and decompress several files and might take a while. All files will be saved in the =data= directory.
 
