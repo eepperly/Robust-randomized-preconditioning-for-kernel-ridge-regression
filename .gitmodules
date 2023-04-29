@@ -1,6 +1,0 @@
-[submodule "FALKON_paper"]
-	path = FALKON_paper
-	url = https://github.com/LCSL/FALKON_paper
-[submodule "recursive-nystrom"]
-	path = recursive-nystrom
-	url = https://github.com/cnmusco/recursive-nystrom.git
