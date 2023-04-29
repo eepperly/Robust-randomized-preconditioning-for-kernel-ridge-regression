@@ -1,8 +1,8 @@
-#+html: <p align="center">
+#+html: >
 #+html:  <img src=".github/assets/krill.png" width="300"/>
 #+html: </p>
 
-#+TITLE: Robust, randomized precondinioning for KRR
+#+TITLE: @@html:<p align="center"><img src=".github/assets/krill.png" width="300"/></p>@@ Robust, randomized preconditioning for KRR
 
 
 This repository contains code accompanying the paper [[https://arxiv.org/abs/2304.12465][Robust, randomized precondinioning for kernel ridge regression]]. It includes simple implementations of the RPCholesky and KRILL preconditioners and scripts to run all the numerical experiments in the paper.
