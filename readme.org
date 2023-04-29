@@ -32,3 +32,14 @@ Note that this will download and decompress several files and might take a while
 
 * Running experiments
 In order to run the experiments you will need access to MATLAB.
+
+* Citation
+
+#+begin_src bibtex
+@article{diaz2023robust,
+  title={Robust, randomized preconditioning for kernel ridge regression},
+  author={D{\'\i}az, Mateo and Epperly, Ethan N and Frangella, Zachary and Tropp, Joel A and Webber, Robert J},
+  journal={arXiv preprint arXiv:2304.12465},
+  year={2023}
+}
+#+end_src
