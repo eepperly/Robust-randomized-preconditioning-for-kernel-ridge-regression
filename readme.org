@@ -31,7 +31,13 @@ $ python download_data.py
 Note that this will download and decompress several files and might take a while. All files will be saved in the =data= directory.
 
 * Running experiments
-In order to run the experiments you will need access to MATLAB.
+In order to run the experiments you will need access to MATLAB. All the experiment scripts are in the =experiments= folders. After running the figures are saved in the =results= folder.
+
+| *Script*                              | *Figures in the paper* |
+| =exact_performance_test.m=            | 1 and 2              |
+| =approximate_performance_test.m=      | 3 and 4              |
+| =rpc_convergence_with_varying_rank.m= | 5                    |
+| =lines_crossing.m=                    | 9                    |
 
 * Citation
 
