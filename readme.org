@@ -44,6 +44,7 @@ In order to run the experiments you will need access to MATLAB. All the experime
 
 * Citation
 
+If you want to cite our work we recommend the following bibtex entry.
 #+begin_src bibtex
 @article{diaz2023robust,
   title={Robust, randomized preconditioning for kernel ridge regression},
