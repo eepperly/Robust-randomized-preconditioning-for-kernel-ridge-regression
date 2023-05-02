@@ -34,10 +34,13 @@ Note that this will download and decompress several files and might take a while
 In order to run the experiments you will need access to MATLAB. All the experiment scripts are in the =experiments= folders. After running the figures are saved in the =results= folder.
 
 | *Script*                              | *Figures in the paper* |
-| =exact_performance_test.m=            | 1 and 2              |
-| =approximate_performance_test.m=      | 3 and 4              |
-| =rpc_convergence_with_varying_rank.m= | 5                    |
-| =lines_crossing.m=                    | 9                    |
+| =exact_performance_test.m=            |              1 and 2 |
+| =approximate_performance_test.m=      |              3 and 4 |
+| =homo_restricted_subsampled_full.m=   |                    5 |
+| =test_exact.m=                        |                    6 |
+| =rpc_convergence_with_varying_rank.m= |                    7 |
+| =susy_10k_centers.m=                  |                    8 |
+| =lines_crossing.m=                    |                    9 |
 
 * Citation
 
