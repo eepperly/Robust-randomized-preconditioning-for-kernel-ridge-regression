@@ -1,48 +1,55 @@
-#+TITLE: Fast and efficient Kernel Ridge Regression Preconditioning
+#+html: <p align="center">
+#+html:  <img src=".github/assets/krill.png" width="300"/>
+#+html: </p>
+#+END_EXPORT
+
+#+TITLE: Robust, randomized preconditioning for KRR
+
+
+This repository contains code accompanying the paper [[https://arxiv.org/abs/2304.12465][Robust, randomized precondinioning for kernel ridge regression]]. It includes simple implementations of the RPCholesky and KRILL preconditioners and scripts to run all the numerical experiments in the paper.
 
 *Warning: the instructions assume that your current working directory is the base of this repository.*
 
-** Add FALKON submodule
-In order to run the experiments involving FALKON you have to run the following commands.
+* One-time setup
+Consider creating a virtual enviroment for this project. For example, by running:
 #+begin_src shell
-$ git submodule update --init
+$ python -m venv .venv
+$ source .venv/bin/activate
 #+end_src
-Then follow the instructions in the [[https://github.com/LCSL/FALKON_paper#installation-on-linux][FALKON readme]].
-** Downloading the data
-To download the data simply run:
+
+Then, install the requirements:
+#+begin_src shell
+$ pip install -r requirements.txt
+#+end_src
+
+* Downloading the data
+To download the data for the performance plots run:
 #+begin_src shell
 $ cd utils
 $ python download_data.py
 #+end_src
-Note that this will download and decompress several files and might take a while.
+Note that this will download and decompress several files and might take a while. All files will be saved in the =data= directory.
 
-** Style guidelines
+* Running experiments
+In order to run the experiments you will need access to MATLAB. All the experiment scripts are in the =experiments= folders. After running the figures are saved in the =results= folder.
 
-*** Fonts and colors
+| *Script*                              | *Figures in the paper* |
+| =exact_performance_test.m=            |              1 and 2 |
+| =approximate_performance_test.m=      |              3 and 4 |
+| =homo_restricted_subsampled_full.m=   |                    5 |
+| =test_exact.m=                        |                    6 |
+| =rpc_convergence_with_varying_rank.m= |                    7 |
+| =susy_10k_centers.m=                  |                    8 |
+| =lines_crossing.m=                    |                    9 |
 
-To load the right fonts, execute
-#+begin_src matlab
-addpath("../utils")
-loadFont
+* Citation
+
+If you want to cite our work we recommend the following bibtex entry.
+#+begin_src bibtex
+@article{diaz2023robust,
+  title={Robust, randomized preconditioning for kernel ridge regression},
+  author={D{\'\i}az, Mateo and Epperly, Ethan N and Frangella, Zachary and Tropp, Joel A and Webber, Robert J},
+  journal={arXiv preprint arXiv:2304.12465},
+  year={2023}
+}
 #+end_src
-To load our color palette, run
-#+begin_src matlab
-addpath("../utils")
-loadColors
-#+end_src
-
-To plot any figure use the following color and style assignment:
-
-+ =('Color', color1)= and =('LineStyle', '-.')=  are used for *Greedy* and *FALKON*.
-+ =('Color', color2)= and =('LineStyle', '-s')=  is used for *Gaussian*.
-+ =('Color', color3)= is used for *RPC* and *KRILL*.
-+ =('Color', color4)= and =('LineStyle', '--')= is used for *Uniform*.
-+ =('Color', color5)= and =('LineStyle', ':')= is used for *No preconditioner* and *Direct*.
-
-*** Good practices
-
-+ Make sure to fix the seed of your random number generator at the beginning of every script, e.g.,
-  #+begin_src matlab
-  rng('default')
-  #+end_src
-+ Please plot the curves associated to RPC and KRILL on top of all the other curves.

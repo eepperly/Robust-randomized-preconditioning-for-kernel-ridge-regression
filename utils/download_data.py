@@ -59,6 +59,10 @@ seed = 926
 raw_data_directory = "../data/raw/"
 mat_data_directory = "../data/preprocessed/"
 
+# DATASETS
+# We download a superset of the datasets we use in the experiments. We decided to drop some of these because
+# their sample size was too small.
+
 # If a dataset includes an url for testing, we use the two datasets, otherwise we split them randomly according
 # to the test_proportion.
 datasets_libsvm = {
@@ -195,30 +199,6 @@ datasets_openml = {
     },
 }
 
-# datasets_openml = {}
-datasets_libsvm = {}
-
-# TODO: Decide what to do with the following datasets. These are here since the LIBSVM fails to parse them,
-# but we want to include them later on.
-failing_datasets = {
-    "epsilon" : {
-        "train": "https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/binary/epsilon_normalized.bz2",
-        "test" : "https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/binary/epsilon_normalized.t.bz2",
-    },
-    "ppi_node2vec" : {
-        "train": "https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/multilabel/ppi_node2vec.svm.bz2",
-        "test_proportion": 0.2,
-    },
-    "protein" : {
-        "train": "https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/multiclass/protein.bz2",
-        "test": "https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/multiclass/protein.t.bz2",
-    },  
-    "SUSY" : {
-        "train": "https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/binary/SUSY.xz",
-        "ntr": 45000,
-        "nts": 5000,
-    },
-}
 
 # Downloads datasets from LIBSVM
 for k, data in datasets_libsvm.items():
