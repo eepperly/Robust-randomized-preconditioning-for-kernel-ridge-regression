@@ -31,8 +31,8 @@ for k = ks
     fprintf("Solving k %d... ", k);
     [~, result] = krr(A, mu, Y, k, [], summary, 'rpcnys', numiters, choltol, pcgtol, true);
     results(1:length(result), counter) = result;
-    fprintf('done! Number of iterations: %d\n', length(result));
-    final_iter(counter) = length(result);
+    fprintf('done! Number of iterations: %d\n', length(result)-1);
+    final_iter(counter) = length(result)-1;
     counter = counter + 1;
 end
 
@@ -44,8 +44,8 @@ for k = ks
     fprintf("Solving k %d... ", k);
     [~, result] = krr(A, mu, Y, k, [], summary, 'uninys', numiters, choltol, pcgtol, true);
     results_uniform(1:length(result), counter) = result;
-    fprintf('done! Number of iterations: %d\n', length(result));
-    final_iter_uniform(counter) = length(result);
+    fprintf('done! Number of iterations: %d\n', length(result)-1);
+    final_iter_uniform(counter) = length(result)-1;
     counter = counter + 1;
 end
 
@@ -57,8 +57,8 @@ for k = ks
     fprintf("Solving k %d... ", k);
     [~, result] = krr(A, mu, Y, k, [], summary, 'greedynys', numiters, choltol, pcgtol, true);
     results_greedy(1:length(result), counter) = result;
-    fprintf('done! Number of iterations: %d\n', length(result));
-    final_iter_greedy(counter) = length(result);
+    fprintf('done! Number of iterations: %d\n', length(result)-1);
+    final_iter_greedy(counter) = length(result)-1;
     counter = counter + 1;
 end
 

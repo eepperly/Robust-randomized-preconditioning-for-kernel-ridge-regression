@@ -27,6 +27,7 @@ end
 stats = [];
 bnorm = norm(b); rnorm = bnorm;
 z = prec(r); p = z;
+if ~isempty(summary); stats(end+1,:) = summary(x); end 
 for iter = 1:maxit
     if verbose
         fprintf('%d\t%e\n',iter,rnorm/bnorm)
