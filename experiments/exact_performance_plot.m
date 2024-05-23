@@ -14,8 +14,11 @@ mu = 1e-7 * N;
 bandwidth = 3;
 num_iter = 250;
 kernel = "gaussian";
+trials = 100;
 
 problems = struct();
+problems.COMET_MC_SAMPLE = ProblemParameters("COMET_MC_SAMPLE", bandwidth, mu, rank, kernel);
+problems.creditcard = ProblemParameters("creditcard", bandwidth, mu, rank, kernel);
 problems.HIGGS = ProblemParameters("HIGGS", bandwidth, mu, rank, kernel);
 problems.cod_rna = ProblemParameters("cod-rna", bandwidth, mu, rank, kernel);
 problems.connect_4 = ProblemParameters("connect-4", bandwidth, mu, rank, kernel);
@@ -25,11 +28,8 @@ problems.sensit_vehicle = ProblemParameters("sensit_vehicle", bandwidth, mu, ran
 problems.sensorless = ProblemParameters("sensorless", bandwidth, mu, rank, kernel);
 problems.YearPredictionMSD = ProblemParameters("YearPredictionMSD", bandwidth, mu, rank, kernel);
 problems.w8a = ProblemParameters("w8a", bandwidth, mu, rank, kernel);
-problems.HIGGS = ProblemParameters("HIGGS", bandwidth, mu, rank, kernel);
 problems.ACSIncome = ProblemParameters("ACSIncome", bandwidth, mu, rank, kernel);
 problems.Airlines_DepDelay_1M = ProblemParameters("Airlines_DepDelay_1M", bandwidth, mu, rank, kernel);
-problems.COMET_MC_SAMPLE = ProblemParameters("COMET_MC_SAMPLE", bandwidth, mu, rank, kernel);
-problems.creditcard = ProblemParameters("creditcard", bandwidth, mu, rank, kernel);
 problems.diamonds = ProblemParameters("diamonds", bandwidth, mu, rank, kernel);
 problems.hls4ml_lhc_jets_hlf = ProblemParameters("hls4ml_lhc_jets_hlf", bandwidth, mu, rank, kernel);
 problems.jannis = ProblemParameters("jannis", bandwidth, mu, rank, kernel);
@@ -93,6 +93,44 @@ for k = 1:numel(names)
     saveas(f1,fullfile(resultsPath, string(names{k}) +'_res.png'))
     saveas(f2,fullfile(resultsPath, string(names{k}) +'_error.fig'))
     saveas(f2,fullfile(resultsPath, string(names{k}) +'_error.png'))
+
+    if strcmp(names{k}, 'COMET_MC_SAMPLE') || strcmp(names{k}, 'creditcard')
+        results.(names{k}).uniform_many = zeros(num_iter,trials);
+        results.(names{k}).rpc_many = zeros(num_iter,trials);
+        fprintf('\n\tMaking confidence interval plots\n')
+        for trial = 1:trials
+            fprintf('\t\tTrial %d\n', trial);
+            [~,results.(names{k}).rpc_many(:,trial)]...
+                = krr(A,problem.Mu,Ytr,problem.ApproximationRank,[],...
+                relres,'rpcnys',num_iter,0,0);
+            [~,results.(names{k}).uniform_many(:,trial)]...
+                = krr(A,problem.Mu,Ytr,problem.ApproximationRank,[],...
+                relres,'uninys',num_iter,0,0);
+        end
+        f1 = figure(2*numel(names) + 1);
+        semilogy(results.(names{k}).greedy(:,1), 'Color', color1, 'LineStyle', '-.')
+        hold on
+        plot_shaded(1:num_iter,...
+            median(results.(names{k}).uniform_many,2),...
+            quantile(results.(names{k}).uniform_many,0.2,2),...
+            quantile(results.(names{k}).uniform_many,0.8,2),...
+            color4, 'Linewidth', 4,'LineStyle', '--')
+        semilogy(results.(names{k}).nopre(:,1), 'Color', color5, 'LineStyle', ':')
+        plot_shaded(1:num_iter,...
+            median(results.(names{k}).rpc_many,2),...
+            quantile(results.(names{k}).rpc_many,0.2,2),...
+            quantile(results.(names{k}).rpc_many,0.8,2),...
+            color3, 'Linewidth', 4)
+        set(gca, 'YScale', 'log')
+        xlabel('Iteration'); ylabel('Relative residual')
+        if strcmp(names{k}, 'COMET_MC_SAMPLE')
+            axis([0 250 1e-10 1e1])
+        else
+            axis([0 250 1e-4 1e1])
+        end
+        saveas(f1,fullfile(resultsPath, string(names{k}) +'_bars.fig'))
+        saveas(f1,fullfile(resultsPath, string(names{k}) +'_bars.png'))
+    end
 end
 
 %% Generate performance plot
