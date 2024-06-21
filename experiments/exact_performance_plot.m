@@ -65,10 +65,14 @@ for k = 1:numel(names)
     tol = 1e-9;
     [~,results.(names{k}).rpc] = krr(A,problem.Mu,Ytr,problem.ApproximationRank,[],summary,'rpcnys',num_iter,tol,tol);
     fprintf('\tRPC iters: %d last iter error: %7.2e\n', size(results.(names{k}).rpc, 1), results.(names{k}).rpc(end, 1));
+    [~,results.(names{k}).rls] = krr(A,problem.Mu,Ytr,problem.ApproximationRank,[],summary,'rlsnys',num_iter,tol,tol);
+    fprintf('\tRLS iters: %d last iter error: %7.2e\n', size(results.(names{k}).rls, 1), results.(names{k}).rls(end, 1));
     [~,results.(names{k}).greedy] = krr(A,problem.Mu,Ytr,problem.ApproximationRank,[],summary,'greedynys',num_iter,tol,tol);
     fprintf('\tGreedy iters: %d, last iter error: %7.2e\n', size(results.(names{k}).greedy, 1), results.(names{k}).greedy(end, 1));
     [~,results.(names{k}).uniform] = krr(A,problem.Mu,Ytr,problem.ApproximationRank,[],summary,'uninys',num_iter,tol,tol);
     fprintf('\tUniform iters: %d, last iter error: %7.2e\n', size(results.(names{k}).uniform, 1), results.(names{k}).uniform(end, 1));
+    [~,results.(names{k}).rff] = krr(A,problem.Mu,Ytr,problem.ApproximationRank,[],summary,'rff',num_iter,tol,tol, [], Xtr, problem.Bandwidth); 
+    fprintf('\tRFF iters: %d, last iter error: %7.2e\n\n', size(results.(names{k}).rff, 1), results.(names{k}).rff(end, 1));
     [~,results.(names{k}).nopre] = krr(A,problem.Mu,Ytr,problem.ApproximationRank,[],summary,'',num_iter,tol,tol);
     fprintf('\tNo precond iters: %d, last iter error: %7.2e\n\n', size(results.(names{k}).nopre, 1), results.(names{k}).nopre(end, 1));
 
@@ -76,6 +80,8 @@ for k = 1:numel(names)
     semilogy(results.(names{k}).greedy(:,2), 'Color', color1, 'LineStyle', '-.')
     hold on
     semilogy(results.(names{k}).uniform(:,2), 'Color', color4, 'LineStyle', '--')
+    semilogy(results.(names{k}).rls(:,2), 'Color', color7,'LineStyle', '-', 'Marker','+')
+    semilogy(results.(names{k}).rff(:,2), 'Color', color8,'LineStyle', '--','Marker','x')
     semilogy(results.(names{k}).nopre(:,2), 'Color', color5, 'LineStyle', ':')
     semilogy(results.(names{k}).rpc(:,2), 'Color', color3)
     xlabel('Iteration'); ylabel('Test error')
@@ -84,6 +90,8 @@ for k = 1:numel(names)
     semilogy(results.(names{k}).greedy(:,1), 'Color', color1, 'LineStyle', '-.')
     hold on
     semilogy(results.(names{k}).uniform(:,1), 'Color', color4, 'LineStyle', '--')
+    semilogy(results.(names{k}).rls(:,1), 'Color', color7,'LineStyle', '-')
+    semilogy(results.(names{k}).rff(:,1), 'Color', color8,'LineStyle', '--')
     semilogy(results.(names{k}).nopre(:,1), 'Color', color5, 'LineStyle', ':')
     semilogy(results.(names{k}).rpc(:,1), 'Color', color3)
     xlabel('Iteration'); ylabel('Relative Residual')
@@ -99,17 +107,19 @@ end
 close all
 loadFont
 loadColors
-density = zeros(num_iter,4);
+density = zeros(num_iter,6);
 names = fieldnames(problems);
 accuracy = 1e-3;
 for k = 1:numel(names)
-   density(min(find(results.(names{k}).rpc(:,1) <= accuracy)), 1) = density(min(find(results.(names{k}).rpc(:,1) <= accuracy)), 1) + 1; 
-   density(min(find(results.(names{k}).greedy(:,1) <= accuracy)), 2) = density(min(find(results.(names{k}).greedy(:,1) <= accuracy)), 2) + 1; 
-   density(min(find(results.(names{k}).uniform(:,1) <= accuracy)), 3) = density(min(find(results.(names{k}).uniform(:,1) <= accuracy)), 3) + 1; 
-   density(min(find(results.(names{k}).nopre(:,1) <= accuracy)), 4) = density(min(find(results.(names{k}).nopre(:,1) <= accuracy)), 4) + 1; 
+   density(min(find(results.(names{k}).rpc(:,1) <= accuracy)), 1) = density(min(find(results.(names{k}).rpc(:,1) <= accuracy)), 1) + 1;
+   density(min(find(results.(names{k}).rls(:,1) <= accuracy)), 2) = density(min(find(results.(names{k}).rls(:,1) <= accuracy)), 2) + 1;
+   density(min(find(results.(names{k}).greedy(:,1) <= accuracy)), 3) = density(min(find(results.(names{k}).greedy(:,1) <= accuracy)), 3) + 1; 
+   density(min(find(results.(names{k}).uniform(:,1) <= accuracy)), 4) = density(min(find(results.(names{k}).uniform(:,1) <= accuracy)), 4) + 1;
+   density(min(find(results.(names{k}).rff(:,1) <= accuracy)), 5) = density(min(find(results.(names{k}).rff(:,1) <= accuracy)), 5) + 1; 
+   density(min(find(results.(names{k}).nopre(:,1) <= accuracy)), 6) = density(min(find(results.(names{k}).nopre(:,1) <= accuracy)), 6) + 1; 
 end
 
-cumulative = zeros(num_iter,4);
+cumulative = zeros(num_iter,6);
 cumulative(1, :) = density(1, :);
 for k = 2:num_iter
     cumulative(k, :) = density(k, :) + cumulative(k-1, :);
@@ -117,10 +127,12 @@ end
 
 fperformance = figure();
 numberproblems = numel(names);
-plot(cumulative(:, 2)/numberproblems, 'Color', color1, 'LineStyle', '-.') % Greedy
+plot(cumulative(:, 3)/numberproblems, 'Color', color1, 'LineStyle', '-.') % Greedy
 hold on
-plot(cumulative(:, 3)/numberproblems, 'Color', color4, 'LineStyle', '--') % Uniform
-plot(cumulative(:, 4)/numberproblems, 'Color', color5, 'LineStyle', ':') % No preconditioner
+plot(cumulative(:, 4)/numberproblems, 'Color', color4, 'LineStyle', '--') % Uniform
+plot(cumulative(:, 2)/numberproblems, 'Color', color7, 'LineStyle', '-') % RLS
+plot(cumulative(:, 5)/numberproblems, 'Color', color8, 'LineStyle', '--') % RFF
+plot(cumulative(:, 6)/numberproblems, 'Color', color5, 'LineStyle', ':') % No preconditioner
 plot(cumulative(:, 1)/numberproblems, 'Color', color3) % RPC
 ylim([0.0 1.0])
 xlabel('Iteration'); 
