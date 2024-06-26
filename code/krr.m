@@ -61,6 +61,15 @@ else
     verbose = false;
 end
 
+if length(varargin) >7 && ~isempty(varargin{8})
+    X = varargin{8};
+end
+
+if length(varargin) >8 && ~isempty(varargin{9})
+    bandwidth = varargin{9};
+end
+
+
 Anum = isfloat(A);
 if Anum
     matvec = @(x) A*x + mu*x;
@@ -91,6 +100,9 @@ if contains(precname, 'nys')
         d = 1 ./ (diag(S) .^2 + mu) - 1/mu; % Form preconditioner
     end
     prec = @(x) U*(d.*(U'*x)) + x/mu;
+elseif contains(precname, 'rff')
+    U = rff(X,mu,bandwidth,k);
+    prec = @(x) 1/mu*(x-U'*(U*x));
 else
     prec = @(x) x;
 end
