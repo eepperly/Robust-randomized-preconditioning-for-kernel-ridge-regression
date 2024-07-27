@@ -8,14 +8,13 @@ resultsPath = createFolderForExecution("approximate_performance_plot");
 %% Parameters
 rng(926); % For reproducibility purposes
 N = 40000;
-k = 4000; % Change to generate different plots (200 -- 4000)
+k = 1000;
 Nts = 1000; % Size of test dataset
-mu = 1e-7 * N;
+mu = 1e-12 * N; % Change to generate different plots (1e-12 -- 1e-6)
 bandwidth = 3;
 num_iter = 100;
 kernel = "gaussian";
 tol = 1e-9;
-trials = 100;
 
 problems = struct();
 problems.HIGGS = ProblemParameters("HIGGS", bandwidth, mu, k, kernel);
@@ -36,7 +35,7 @@ problems.hls4ml_lhc_jets_hlf = ProblemParameters("hls4ml_lhc_jets_hlf", bandwidt
 problems.jannis = ProblemParameters("jannis", bandwidth, mu, k, kernel);
 problems.Medical_Appointment = ProblemParameters("Medical-Appointment", bandwidth, mu, k, kernel);
 problems.MNIST = ProblemParameters("MNIST", bandwidth, mu, k, kernel);
-problems.santander = ProblemParameters("santander", bandwidth, mu, k, kernel);
+%problems.santander = ProblemParameters("santander", bandwidth, mu, k, kernel);
 problems.volkert = ProblemParameters("volkert", bandwidth, mu, k, kernel);
 problems.yolanda = ProblemParameters("yolanda", bandwidth, mu, k, kernel);
 
@@ -58,7 +57,8 @@ for j = 1:numel(names)
 
     S = randsample(n, k, false);
     A_S = kernelmatrix(Xtr, Xtr(S,:), problem.Kernel, problem.Bandwidth);
-    A_SS = A_S(S,:);
+    %A_SS = A_S(S,:);
+    A_SS = A_S(S,:) + (N * k / mu) * eps * eye(k);
     Ats = kernelmatrix(Xts, Xtr(S,:), problem.Kernel, problem.Bandwidth);
     ASY = A_S' * Ytr;
 
@@ -96,57 +96,12 @@ for j = 1:numel(names)
     saveas(f1,fullfile(resultsPath, string(names{j}) +'_res.png'))
     saveas(f2,fullfile(resultsPath, string(names{j}) +'_test_error.fig'))
     saveas(f2,fullfile(resultsPath, string(names{j}) +'_test_error.png'))
-
-    if strcmp(names{j}, 'HIGGS')
-        results.(names{j}).falkon_many = zeros(num_iter,trials);
-        results.(names{j}).krill_many = zeros(num_iter,trials);
-        results.(names{j}).noprec_many = zeros(num_iter,trials);
-        fprintf('\n\tMaking confidence interval plots\n')
-        for trial = 1:trials
-            fprintf('\t\tTrial %d\n', trial);
-            S = randsample(n, k, false);
-            A_S = kernelmatrix(Xtr, Xtr(S,:), problem.Kernel,...
-                problem.Bandwidth);
-            A_SS = A_S(S,:);
-            Ats = kernelmatrix(Xts, Xtr(S,:), problem.Kernel,...
-                problem.Bandwidth);
-            ASY = A_S' * Ytr;
-            relres = @(beta) norm(A_S'*(A_S*beta) + mu*A_SS*beta - ASY) / norm(ASY);
-            [~,results.(names{j}).falkon_many(:,trial)]...
-                = approximate_krr(A_S,A_SS,mu,Ytr,relres,num_iter,0,'falkon');
-            [~,results.(names{j}).krill_many(:,trial)]...
-                = approximate_krr(A_S,A_SS,mu,Ytr,relres,num_iter,0,'spchol');
-            [~,results.(names{j}).noprec_many(:,trial)]...
-                = approximate_krr(A_S,A_SS,mu,Ytr,relres,num_iter,0,'');
-        end
-        f1 = figure(2*numel(names) + 1);
-        plot_shaded(1:num_iter,...
-            median(results.(names{j}).falkon_many,2),...
-            quantile(results.(names{j}).falkon_many,0.2,2),...
-            quantile(results.(names{j}).falkon_many,0.8,2),...
-            color1, 'Linewidth', 4, 'LineStyle', '-.')
-        hold on
-        plot_shaded(1:num_iter,...
-            median(results.(names{j}).noprec_many,2),...
-            quantile(results.(names{j}).noprec_many,0.2,2),...
-            quantile(results.(names{j}).noprec_many,0.8,2),...
-            color5, 'Linewidth', 4,'LineStyle', ':')
-        plot_shaded(1:num_iter,...
-            median(results.(names{j}).krill_many,2),...
-            quantile(results.(names{j}).krill_many,0.2,2),...
-            quantile(results.(names{j}).krill_many,0.8,2),...
-            color3, 'Linewidth', 4)
-        set(gca, 'YScale', 'log')
-        xlabel('Iteration'); ylabel('Relative residual')
-        axis([0 100 1e-10 1e0])
-        saveas(f1,fullfile(resultsPath, string(names{j}) +'_bars.fig'))
-        saveas(f1,fullfile(resultsPath, string(names{j}) +'_bars.png'))
-    end
 end
 
 %% Generate performance plot
 loadColors
 loadFont
+close all
 density = zeros(num_iter,3);
 names = fieldnames(problems);
 accuracy = 1e-4;
@@ -155,8 +110,6 @@ for j = 1:numel(names)
    density(min(find(results.(names{j}).falkon(:,1) <= accuracy)), 2) = density(min(find(results.(names{j}).falkon(:,1) <= accuracy)), 2) + 1;
    density(min(find(results.(names{j}).noprec(:,1) <= accuracy)), 3) = density(min(find(results.(names{j}).noprec(:,1) <= accuracy)), 3) + 1;
 end
-
-
 cumulative = zeros(num_iter,3);
 cumulative(1, :) = density(1, :);
 for j = 2:num_iter
@@ -165,7 +118,6 @@ end
 
 fperformance = figure();
 numberproblems = numel(names);
-
 plot(cumulative(:, 2)/numberproblems, 'Linewidth', 4, 'Color', color1, 'LineStyle', '-.') % FALKON
 hold on
 plot(cumulative(:, 3)/numberproblems, 'Linewidth', 4, 'Color', color5, 'LineStyle', ':') % No Prec
@@ -173,7 +125,7 @@ plot(cumulative(:, 1)/numberproblems, 'Linewidth', 4, 'Color', color3) % KRILL
 ylim([0.0 1.0])
 xlabel('Iteration', 'FontSize', 24); 
 ylabel('Fraction of solved problems', 'FontSize', 24)
-le = legend({'FALKON', 'No preconditioner', 'KRILL (Ours)'}, 'Location', 'southeast');
+%le = legend({'FALKON', 'No preconditioner', 'KRILL (Ours)'}, 'Location', 'southeast');
 set(gca,'FontSize',20)
 axis([0 num_iter 0 1])
 saveas(fperformance,fullfile(resultsPath, accuracy + "_" + k + "_performance.fig"))
@@ -182,3 +134,18 @@ exportgraphics(fperformance,fullfile(resultsPath, accuracy + "_" + k + "_perform
 %% Save everything
 save(fullfile(resultsPath, 'state.mat'), 'problems', 'results', 'num_iter', 'N', 'Nts', 'mu', 'bandwidth', 'k', 'resultsPath' )
 
+%% Check which problems are most difficult
+accuracy = 1e-4
+difficulty = ones(numel(names), 2) * 100;
+for k = 1:numel(names)
+    add = (results.(names{k}).krill(:,1) <= accuracy);
+    if max(add) == 1
+        difficulty(k, 1) = min(find(add));
+    end
+    add = results.(names{k}).falkon(:,1) <= accuracy;
+    if max(add) == 1
+        difficulty(k, 2) = min(find(add));
+    end
+end
+mean(difficulty,2)
+(difficulty(:,2)-difficulty(:,1))./difficulty(:,1)
