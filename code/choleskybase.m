@@ -17,7 +17,11 @@ while i < k
     AS_new = Afun(s);
     G = AS_new - F(:,1:i) * F(s,1:i)';
     H = G(s,:);
-    R = chol(H + max(trace(H), scale)*eps*eye(size(H,1)));
+    [R,flag] = chol(H + max(trace(H), scale)*eps*eye(size(H,1)));
+    while flag
+        H = H + max(trace(H), scale)*eps*eye(size(H,1));
+        [R,flag] = chol(H);
+    end
     F(:,i+1:i+length(s)) = G / R;
     AS(:,i+1:i+length(s)) = AS_new;
     d = max(d - vecnorm(F(:,i+1:i+length(s)),2,2) .^ 2,0);
