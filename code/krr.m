@@ -16,6 +16,8 @@ function [x,stats] = krr(A,mu,b,k,varargin)
 % 6. pcgtol: relative tolerance for CG, i.e, CG stops after the residual is
 %    reduced to 'pcgtol' times its inital value (defaults to 0).
 % 7. verbose: whether to print iteration information (defaults to false).
+% 8. data: data underlying kernel matrix (used for 'rff' preconditioner)
+% 9. bandwidth: Gaussian kernel bandwidth (used for 'rff' preconditioner)
 
 if isfloat(A)
     d = diag(A);
@@ -61,6 +63,15 @@ else
     verbose = false;
 end
 
+if length(varargin) > 7 && ~isempty(varargin{8})
+    X = varargin{8};
+end
+
+if length(varargin) > 8 && ~isempty(varargin{9})
+    bandwidth = varargin{9};
+end
+
+
 Anum = isfloat(A);
 if Anum
     matvec = @(x) A*x + mu*x;
@@ -91,6 +102,9 @@ if contains(precname, 'nys')
         d = 1 ./ (diag(S) .^2 + mu) - 1/mu; % Form preconditioner
     end
     prec = @(x) U*(d.*(U'*x)) + x/mu;
+elseif contains(precname, 'rff')
+    U = rff(X,mu,bandwidth,k);
+    prec = @(x) 1/mu*(x-U'*(U*x));
 else
     prec = @(x) x;
 end

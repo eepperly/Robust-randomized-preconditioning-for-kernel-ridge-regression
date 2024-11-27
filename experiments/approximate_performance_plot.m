@@ -15,6 +15,7 @@ bandwidth = 3;
 num_iter = 100;
 kernel = "gaussian";
 tol = 1e-9;
+trials = 100;
 
 problems = struct();
 problems.HIGGS = ProblemParameters("HIGGS", bandwidth, mu, k, kernel);
@@ -95,6 +96,52 @@ for j = 1:numel(names)
     saveas(f1,fullfile(resultsPath, string(names{j}) +'_res.png'))
     saveas(f2,fullfile(resultsPath, string(names{j}) +'_test_error.fig'))
     saveas(f2,fullfile(resultsPath, string(names{j}) +'_test_error.png'))
+
+    if strcmp(names{j}, 'HIGGS')
+        results.(names{j}).falkon_many = zeros(num_iter,trials);
+        results.(names{j}).krill_many = zeros(num_iter,trials);
+        results.(names{j}).noprec_many = zeros(num_iter,trials);
+        fprintf('\n\tMaking confidence interval plots\n')
+        for trial = 1:trials
+            fprintf('\t\tTrial %d\n', trial);
+            S = randsample(n, k, false);
+            A_S = kernelmatrix(Xtr, Xtr(S,:), problem.Kernel,...
+                problem.Bandwidth);
+            A_SS = A_S(S,:);
+            Ats = kernelmatrix(Xts, Xtr(S,:), problem.Kernel,...
+                problem.Bandwidth);
+            ASY = A_S' * Ytr;
+            relres = @(beta) norm(A_S'*(A_S*beta) + mu*A_SS*beta - ASY) / norm(ASY);
+            [~,results.(names{j}).falkon_many(:,trial)]...
+                = approximate_krr(A_S,A_SS,mu,Ytr,relres,num_iter,0,'falkon');
+            [~,results.(names{j}).krill_many(:,trial)]...
+                = approximate_krr(A_S,A_SS,mu,Ytr,relres,num_iter,0,'spchol');
+            [~,results.(names{j}).noprec_many(:,trial)]...
+                = approximate_krr(A_S,A_SS,mu,Ytr,relres,num_iter,0,'');
+        end
+        f1 = figure(2*numel(names) + 1);
+        plot_shaded(1:num_iter,...
+            median(results.(names{j}).falkon_many,2),...
+            quantile(results.(names{j}).falkon_many,0.2,2),...
+            quantile(results.(names{j}).falkon_many,0.8,2),...
+            color1, 'Linewidth', 4, 'LineStyle', '-.')
+        hold on
+        plot_shaded(1:num_iter,...
+            median(results.(names{j}).noprec_many,2),...
+            quantile(results.(names{j}).noprec_many,0.2,2),...
+            quantile(results.(names{j}).noprec_many,0.8,2),...
+            color5, 'Linewidth', 4,'LineStyle', ':')
+        plot_shaded(1:num_iter,...
+            median(results.(names{j}).krill_many,2),...
+            quantile(results.(names{j}).krill_many,0.2,2),...
+            quantile(results.(names{j}).krill_many,0.8,2),...
+            color3, 'Linewidth', 4)
+        set(gca, 'YScale', 'log')
+        xlabel('Iteration'); ylabel('Relative residual')
+        axis([0 100 1e-10 1e0])
+        saveas(f1,fullfile(resultsPath, string(names{j}) +'_bars.fig'))
+        saveas(f1,fullfile(resultsPath, string(names{j}) +'_bars.png'))
+    end
 end
 
 %% Generate performance plot

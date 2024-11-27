@@ -4,4 +4,6 @@ color3 = "#dc267f";
 color4 = "#fe6100";
 color5 = "#ffb000";
 color6 = "#000000";
-colors = {color1, color2, color3, color4, color5, color6};
+color7 = "#dde1e6";
+color8 = "#8a3ffc";
+colors = {color1, color2, color3, color4, color5, color6, color7, color8};
