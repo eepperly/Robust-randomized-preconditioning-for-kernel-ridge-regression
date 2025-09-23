@@ -14,7 +14,7 @@ clear A b
 Y(Y==0) = -1; Y_test(Y_test==0) = -1; %Convert labels from 0,1 to -1,+1
 
 mu = 10^(-3); %regularization 
-bandwidth = 16; %%sigma^2
+bandwidth = 4; %%sigma
 kernel = @(X1,X2) kernelmatrix(X1, X2, 'gaussian', bandwidth); %define kernel 
 k = 10000;  S = randsample(N,k,false); %sample 10,000 centers
 
